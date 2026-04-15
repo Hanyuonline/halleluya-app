@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Halleluya — Comunidad de Oración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky:      #1A8FD1;
+      --sky-deep: #0E6EA8;
+      --white:    #ffffff;
+      --cloud:    #F0F8FF;
+      --mist:     #D0E8F5;
+      --text:     #0a2a3d;
+      --text-soft:#4a7a9b;
+      --bg:       #EBF5FB;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Lato', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ════════════════════════
+       LOGIN SCREEN
+    ════════════════════════ */
+    #screen-login {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      background: var(--sky);
+      position: relative;
+      overflow: hidden;
+    }
+    .ray { position:absolute; border-radius:50%; background:rgba(255,255,255,.04); animation:pulse 6s ease-in-out infinite; }
+    .ray-1 { width:600px;height:600px;top:-200px;left:50%;transform:translateX(-50%); }
+    .ray-2 { width:400px;height:400px;top:-100px;left:50%;transform:translateX(-50%);animation-delay:1s;background:rgba(255,255,255,.05); }
+    .ray-3 { width:800px;height:800px;bottom:-300px;left:50%;transform:translateX(-50%);animation-delay:2s; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:translateX(-50%) scale(1)}50%{opacity:.6;transform:translateX(-50%) scale(1.05)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn  { from{opacity:0}to{opacity:1} }
+
+    .auth-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 48px 40px 40px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 2;
+      animation: slideUp .7s cubic-bezier(.16,1,.3,1) both;
+    }
+    .logo-area { display:flex;flex-direction:column;align-items:center;margin-bottom:32px; }
+    .logo-icon { width:64px;height:64px;background:var(--sky);border-radius:18px;display:flex;align-items:center;justify-content:center;margin-bottom:14px; }
+    .logo-name { font-family:'Cinzel',serif;font-size:28px;font-weight:400;letter-spacing:4px;color:var(--sky);margin-bottom:6px; }
+    .logo-verse { font-size:11px;color:var(--text-soft);letter-spacing:1px;text-align:center;line-height:1.6;font-style:italic; }
+    .error-box { display:none;background:#fff0f0;color:#c0392b;border:1px solid #f5c6cb;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;text-align:center; }
+    .auth-tabs { display:flex;background:var(--cloud);border-radius:12px;padding:4px;margin-bottom:24px; }
+    .auth-tab { flex:1;padding:9px;text-align:center;font-size:12px;color:var(--text-soft);border-radius:9px;cursor:pointer;transition:all .2s;user-select:none; }
+    .auth-tab.active { background:var(--white);color:var(--sky);box-shadow:0 1px 4px rgba(26,143,209,.1); }
+    .form-group { margin-bottom:14px; }
+    .form-label { display:block;font-size:11px;color:var(--text-soft);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase; }
+    .form-input { width:100%;padding:13px 16px;border:1.5px solid var(--mist);border-radius:12px;font-family:'Lato',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s; }
+    .form-input:focus { border-color:var(--sky); }
+    .form-input::placeholder { color:#b0c8db; }
+    .forgot { text-align:right;margin-top:-8px;margin-bottom:14px; }
+    .forgot a { font-size:11px;color:var(--text-soft);text-decoration:none; }
+    .btn-primary { display:flex;align-items:center;justify-content:center;width:100%;padding:15px;border:none;border-radius:14px;background:var(--sky);font-family:'Lato',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;color:#fff;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px; }
+    .btn-primary:hover { background:var(--sky-deep); }
+    .btn-primary:active { transform:scale(.98); }
+    .btn-primary:disabled { opacity:.6;cursor:not-allowed; }
+    .divider { display:flex;align-items:center;gap:12px;margin:20px 0; }
+    .divider-line { flex:1;height:.5px;background:var(--mist); }
+    .divider-text { font-size:11px;color:var(--text-soft);letter-spacing:1px; }
+    .btn-google { display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px;border:1.5px solid var(--mist);border-radius:14px;background:var(--white);font-family:'Lato',sans-serif;font-size:14px;color:var(--text);cursor:pointer;transition:border-color .2s,background .2s; }
+    .btn-google:hover { border-color:var(--sky);background:var(--cloud); }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .footer-link { text-align:center;margin-top:16px;font-size:12px;color:var(--text-soft); }
+    .footer-link a { color:var(--sky);text-decoration:none; }
+    .bottom-verse { position:relative;z-index:2;margin-top:24px;text-align:center;color:rgba(255,255,255,.5);font-size:11px;font-style:italic;line-height:1.7;max-width:320px;animation:slideUp .7s cubic-bezier(.16,1,.3,1) .3s both; }
+
+    /* ════════════════════════
+       APP SCREEN
+    ════════════════════════ */
+    #screen-app { display:none; min-height:100vh; flex-direction:column; }
+
+    /* Top bar */
+    .topbar {
+      background: var(--sky);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-title { font-family:'Cinzel',serif;font-size:20px;font-weight:400;letter-spacing:3px;color:#fff; }
+    .topbar-right { display:flex;align-items:center;gap:10px; }
+    .avatar-btn { width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;color:#fff;font-size:13px;font-weight:700;font-family:'Lato',sans-serif;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+    .avatar-btn:hover { background:rgba(255,255,255,.3); }
+
+    /* Tabs */
+    .app-tabs {
+      display: flex;
+      background: var(--white);
+      border-bottom: 1px solid var(--mist);
+      position: sticky;
+      top: 62px;
+      z-index: 99;
+    }
+    .app-tab { flex:1;padding:12px 8px;text-align:center;font-size:13px;color:var(--text-soft);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;user-select:none; }
+    .app-tab.active { color:var(--sky);border-bottom-color:var(--sky);font-weight:700; }
+
+    /* Feed */
+    .feed { padding:16px;display:flex;flex-direction:column;gap:12px;max-width:640px;margin:0 auto;width:100%; }
+
+    /* Prayer card */
+    .pcard {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--mist);
+      animation: slideUp .4s cubic-bezier(.16,1,.3,1) both;
+    }
+    .pcard-top { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+    .pcard-avatar { width:36px;height:36px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--sky);flex-shrink:0; }
+    .pcard-name { font-size:13px;font-weight:700;color:var(--text); }
+    .pcard-time { font-size:11px;color:var(--text-soft); }
+    .pcard-tag { margin-left:auto;font-size:10px;border-radius:20px;padding:3px 10px;background:var(--cloud);color:var(--sky);border:1px solid var(--mist);white-space:nowrap; }
+    .pcard-text { font-size:14px;color:var(--text);line-height:1.6;margin-bottom:12px; }
+    .pcard-actions { display:flex;align-items:center;gap:10px; }
+    .btn-amen {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sky);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      position: relative;
+    }
+    .btn-amen:hover { background:var(--sky-deep); }
+    .btn-amen:hover .amen-tooltip { opacity:1; transform:translateX(-50%) translateY(0); }
+    .btn-amen:active { transform:scale(.96); }
+    .btn-amen.active { background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7; }
+    .btn-amen.active:hover { background:#c8e6c9; }
+    .amen-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: var(--text);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 400;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 10;
+    }
+    .amen-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--text);
+    }
+    .amen-count { font-size:12px;color:var(--text-soft); }
+    .mine-stat { display:flex;align-items:baseline;gap:6px; }
+    .mine-stat-num { font-size:22px;font-weight:700;color:var(--sky); }
+    .mine-stat-lbl { font-size:12px;color:var(--text-soft); }
+    .anon-badge { font-size:10px;background:#fff8e1;color:#b8860b;border-radius:8px;padding:2px 8px;margin-left:auto; }
+
+    /* Testimony card */
+    .tcard { background:var(--white);border-radius:16px;border:1px solid var(--mist);overflow:hidden;animation:slideUp .4s cubic-bezier(.16,1,.3,1) both; }
+    .tcard-img { width:100%;height:180px;object-fit:cover;display:block; }
+    .tcard-body { padding:14px 16px 16px; }
+    .tcard-title { font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4; }
+    .tcard-text { font-size:13px;color:var(--text-soft);line-height:1.6;margin-bottom:12px; }
+    .tcard-top { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+    .btn-aleluya {
+      display:flex;align-items:center;gap:6px;
+      background:#fff8e6;color:#b8860b;
+      border:1px solid #f0d080;border-radius:20px;
+      padding:7px 16px;font-size:13px;font-weight:700;
+      font-family:'Lato',sans-serif;cursor:pointer;
+      transition:background .2s,transform .1s;position:relative;
+    }
+    .btn-aleluya:hover { background:#ffeeba; }
+    .btn-aleluya:hover .amen-tooltip { opacity:1;transform:translateX(-50%) translateY(0); }
+    .btn-aleluya:active { transform:scale(.96); }
+    .btn-share {
+      display:flex;align-items:center;gap:5px;
+      background:none;border:1px solid var(--mist);border-radius:20px;
+      padding:6px 12px;font-size:12px;color:var(--text-soft);
+      font-family:'Lato',sans-serif;cursor:pointer;
+      transition:border-color .2s,color .2s,background .2s;margin-left:auto;
+    }
+    .btn-share:hover { border-color:var(--sky);color:var(--sky);background:var(--cloud); }
+    .btn-share svg { flex-shrink:0; }
+    .share-toast {
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      background:#0a2a3d;color:#fff;padding:10px 20px;border-radius:20px;
+      font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;
+      z-index:999;white-space:nowrap;
+    }
+    .share-toast.show { opacity:1; }
+    .btn-aleluya.active { background:#fffde7;color:#f57f17;border-color:#ffe082; }
+    .aleluya-count { font-size:12px;color:var(--text-soft); }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--sky);
+      color: #fff;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(26,143,209,.4);
+      transition: background .2s, transform .1s;
+      z-index: 200;
+    }
+    .fab:hover { background:var(--sky-deep); }
+    .fab:active { transform:scale(.94); }
+
+    /* Empty state */
+    .empty { text-align:center;padding:48px 20px;color:var(--text-soft); }
+    .empty-icon { font-size:48px;margin-bottom:12px; }
+    .empty-text { font-size:15px;line-height:1.6; }
+
+    /* Loading */
+    .loading { text-align:center;padding:32px;color:var(--text-soft);font-size:14px; }
+
+    /* ════════════════════════
+       MODAL — Nueva oración
+    ════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,42,61,.5);
+      z-index: 300;
+      align-items: flex-end;
+      justify-content: center;
+      animation: fadeIn .2s ease both;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background: var(--white);
+      border-radius: 24px 24px 0 0;
+      padding: 28px 24px 40px;
+      width: 100%;
+      max-width: 640px;
+      animation: slideUp .35s cubic-bezier(.16,1,.3,1) both;
+    }
+    .modal-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+    .modal-title { font-family:'Cinzel',serif;font-size:18px;color:var(--sky);letter-spacing:1px; }
+    .modal-close { background:none;border:none;font-size:22px;color:var(--text-soft);cursor:pointer;line-height:1; }
+    .modal-close:hover { color:var(--text); }
+
+    .select-input { width:100%;padding:13px 16px;border:1.5px solid var(--mist);border-radius:12px;font-family:'Lato',sans-serif;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s;appearance:none; }
+    .select-input:focus { border-color:var(--sky); }
+    textarea.form-input { resize:vertical;min-height:100px;line-height:1.5; }
+
+    .anon-toggle { display:flex;align-items:center;gap:10px;margin:16px 0;cursor:pointer;user-select:none; }
+    .anon-toggle input { width:18px;height:18px;accent-color:var(--sky);cursor:pointer; }
+    .anon-toggle span { font-size:13px;color:var(--text-soft); }
+
+    /* User dropdown */
+    .user-menu {
+      display: none;
+      position: absolute;
+      top: 54px;
+      right: 16px;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--mist);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      padding: 8px 0;
+      min-width: 200px;
+      z-index: 999;
+      animation: slideUp .2s ease both;
+    }
+    .user-menu.open { display:block; }
+    .user-menu-name { padding:10px 16px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--mist);margin-bottom:4px; }
+    .user-menu-item { display:block;width:100%;padding:10px 16px;font-size:13px;color:var(--text);background:none;border:none;text-align:left;cursor:pointer;font-family:'Lato',sans-serif;transition:background .15s; }
+    .user-menu-item:hover { background:var(--cloud); }
+    .user-menu-item.danger { color:#c0392b; }
+    .user-menu-email { padding:0 16px 10px;font-size:11px;color:var(--text-soft);border-bottom:1px solid var(--mist);margin-bottom:4px; }
+    .user-menu-section { padding:4px 16px 2px;font-size:10px;color:var(--text-soft);letter-spacing:1px;text-transform:uppercase;margin-top:4px; }
+    .user-menu-divider { height:.5px;background:var(--mist);margin:6px 0; }
+
+    /* Comments */
+    .comments-area { border-top:1px solid var(--mist);margin-top:12px;padding-top:10px; }
+    .comment-toggle { display:flex;align-items:center;gap:6px;background:none;border:none;font-size:12px;color:var(--text-soft);cursor:pointer;padding:0;font-family:'Lato',sans-serif;transition:color .15s; }
+    .comment-toggle:hover { color:var(--sky); }
+    .comments-list { margin-top:10px;display:flex;flex-direction:column;gap:8px; }
+    .comment-item { display:flex;gap:8px;align-items:flex-start; }
+    .comment-avatar { width:26px;height:26px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--sky);flex-shrink:0;margin-top:1px; }
+    .comment-bubble { background:var(--cloud);border-radius:0 10px 10px 10px;padding:8px 10px;flex:1; }
+    .comment-author { font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px; }
+    .comment-text { font-size:12px;color:var(--text-soft);line-height:1.5; }
+    .comment-time { font-size:10px;color:var(--text-soft);margin-top:2px; }
+    .comment-input-row { display:flex;gap:8px;margin-top:10px;align-items:center; }
+    .comment-input { flex:1;padding:9px 12px;border:1.5px solid var(--mist);border-radius:20px;font-family:'Lato',sans-serif;font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .2s; }
+    .comment-input:focus { border-color:var(--sky); }
+    .comment-send { width:34px;height:34px;border-radius:50%;background:var(--sky);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s; }
+    .comment-send:hover { background:var(--sky-deep); }
+    .show-more-comments { background:none;border:none;font-size:11px;color:var(--sky);cursor:pointer;padding:4px 0;font-family:'Lato',sans-serif; }
+    .show-more-comments:hover { text-decoration:underline; }
+
+    @media (max-width:480px) {
+      .auth-card { padding:36px 24px 32px;border-radius:24px; }
+      .logo-name { font-size:24px; }
+    }
+
+    .google-svg { flex-shrink:0; }
+
+    /* ── Language selector ── */
+    .lang-selector {
+      display:flex;align-items:center;gap:6px;
+      background:rgba(255,255,255,.15);border:none;border-radius:20px;
+      padding:5px 10px;color:#fff;font-size:12px;font-weight:700;
+      font-family:'Lato',sans-serif;cursor:pointer;transition:background .2s;
+    }
+    .lang-selector:hover { background:rgba(255,255,255,.25); }
+
+    /* Lang dropdown */
+    .lang-menu {
+      display:none;position:absolute;top:54px;right:60px;
+      background:var(--white);border-radius:14px;border:1px solid var(--mist);
+      box-shadow:0 8px 24px rgba(0,0,0,.12);padding:8px 10px;
+      z-index:999;animation:slideUp .2s ease both;
+    }
+    .lang-menu.open { display:flex; gap:4px; }
+    .lang-option { display:flex;align-items:center;justify-content:center;
+      width:36px;height:28px;
+      background:none;border:1.5px solid transparent;border-radius:6px;
+      cursor:pointer;transition:border-color .15s,background .15s;padding:2px; }
+    .lang-option img { width:24px;height:18px;border-radius:2px;display:block; }
+    .lang-option:hover { background:var(--cloud); border-color:var(--mist); }
+    .lang-option.active { border-color:var(--sky); background:var(--cloud); }
+
+    /* Flag badge on cards */
+    .flag-badge { font-size:14px;line-height:1; }
+
+    /* Dove icon in testimonies tab */
+    .tab-dove { font-size:15px; }
+
+    /* ── Answered prayer ── */
+    .pcard.answered { border-color:#a5d6a7; background:#f9fff9; }
+    .answered-badge { display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:8px; }
+    .btn-answered {
+      display:flex;align-items:center;gap:6px;
+      background:#e8f5e9;color:#2e7d32;
+      border:1.5px solid #a5d6a7;border-radius:20px;
+      padding:7px 14px;font-size:12px;font-weight:700;
+      font-family:'Lato',sans-serif;cursor:pointer;
+      transition:background .2s,transform .1s;white-space:nowrap;
+    }
+    .btn-answered:hover { background:#c8e6c9; }
+    .btn-answered:active { transform:scale(.96); }
+    .linked-prayer {
+      background:var(--cloud);border-left:3px solid var(--sky);
+      border-radius:0 10px 10px 0;padding:10px 12px;
+      margin-bottom:14px;font-size:12px;color:var(--text-soft);
+      line-height:1.5;
+    }
+    .linked-prayer-label { font-size:10px;font-weight:700;color:var(--sky);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px; }
+
+    /* ── Onboarding ── */
+    #screen-onboarding {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--sky);
+      z-index: 500;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      overflow: hidden;
+    }
+    #screen-onboarding.open { display: flex; }
+    .ob-steps { display:flex; gap:6px; margin-bottom:32px; }
+    .ob-step-dot { width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:background .3s; }
+    .ob-step-dot.active { background:#fff;width:24px;border-radius:4px; }
+    .ob-slide { display:none;flex-direction:column;align-items:center;text-align:center;animation:slideUp .5s cubic-bezier(.16,1,.3,1) both; }
+    .ob-slide.active { display:flex; }
+    .ob-icon { font-size:64px;margin-bottom:20px; }
+    .ob-title { font-family:'Cinzel',serif;font-size:24px;color:#fff;letter-spacing:2px;margin-bottom:12px; }
+    .ob-desc { font-size:15px;color:rgba(255,255,255,.8);line-height:1.7;max-width:300px;margin-bottom:40px; }
+    .ob-btn {
+      background:#fff;color:var(--sky);border:none;border-radius:50px;
+      padding:14px 40px;font-size:15px;font-weight:700;
+      font-family:'Lato',sans-serif;cursor:pointer;
+      transition:opacity .2s;width:100%;max-width:300px;
+    }
+    .ob-btn:hover { opacity:.9; }
+    .ob-skip { margin-top:16px;background:none;border:none;color:rgba(255,255,255,.5);font-size:13px;cursor:pointer;font-family:'Lato',sans-serif; }
+    .ob-skip:hover { color:rgba(255,255,255,.8); }
+
+    /* ── Card action menu (edit/delete) ── */
+    .card-menu-btn { background:none;border:none;cursor:pointer;color:var(--text-soft);font-size:18px;line-height:1;padding:2px 6px;border-radius:6px;margin-left:auto;transition:background .15s; }
+    .card-menu-btn:hover { background:var(--cloud); }
+    .card-dropdown { display:none;position:absolute;right:0;top:32px;background:var(--white);border:1px solid var(--mist);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.1);min-width:140px;z-index:50;overflow:hidden; }
+    .card-dropdown.open { display:block; }
+    .card-dropdown-item { display:block;width:100%;padding:10px 14px;font-size:13px;color:var(--text);background:none;border:none;text-align:left;cursor:pointer;font-family:'Lato',sans-serif;transition:background .15s; }
+    .card-dropdown-item:hover { background:var(--cloud); }
+    .card-dropdown-item.del { color:#c0392b; }
+    .pcard { position:relative; }
+    .tcard { position:relative; }
+
+    /* ── Ofrenda banner ── */
+    .ofrenda-banner {
+      margin: 0 16px 100px;
+      background:var(--white);
+      border:1px solid #f0d080;
+      border-radius:14px;
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .ofrenda-banner-text { font-size:12px;color:var(--text-soft);line-height:1.5;flex:1; }
+    .ofrenda-banner-text strong { color:var(--text);font-size:13px;display:block;margin-bottom:2px; }
+    .btn-ofrenda {
+      background:#fff8e6;color:#b8860b;border:1px solid #f0d080;
+      border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700;
+      font-family:'Lato',sans-serif;cursor:pointer;white-space:nowrap;
+      transition:background .2s;flex-shrink:0;
+    }
+    .btn-ofrenda:hover { background:#ffeeba; }
+
+    /* ── Ofrenda modal ── */
+    .ofrenda-modal-overlay {
+      display:none;position:fixed;inset:0;
+      background:rgba(10,42,61,.5);z-index:400;
+      align-items:center;justify-content:center;padding:20px;
+    }
+    .ofrenda-modal-overlay.open { display:flex; }
+    .ofrenda-modal {
+      background:var(--white);border-radius:24px;
+      padding:32px 28px;width:100%;max-width:360px;
+      text-align:center;animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;
+    }
+    .ofrenda-icon { font-size:40px;margin-bottom:12px; }
+    .ofrenda-title { font-family:'Cinzel',serif;font-size:18px;color:var(--sky);letter-spacing:1px;margin-bottom:10px; }
+    .ofrenda-msg { font-size:14px;color:var(--text-soft);line-height:1.7;margin-bottom:24px; }
+    .btn-ofrenda-confirm {
+      display:block;width:100%;padding:14px;border:none;border-radius:14px;
+      background:#f0d060;color:#6b4c00;font-family:'Lato',sans-serif;
+      font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;
+      transition:background .2s;
+    }
+    .btn-ofrenda-confirm:hover { background:#e8c840; }
+    .btn-ofrenda-cancel { background:none;border:none;font-size:13px;color:var(--text-soft);cursor:pointer;font-family:'Lato',sans-serif;padding:4px; }
+    .btn-ofrenda-cancel:hover { color:var(--text); }
+
+    /* ── Edit modal ── */
+    .edit-modal-overlay {
+      display:none;position:fixed;inset:0;
+      background:rgba(10,42,61,.5);z-index:400;
+      align-items:flex-end;justify-content:center;
+    }
+    .edit-modal-overlay.open { display:flex; }
+    .edit-modal {
+      background:var(--white);border-radius:24px 24px 0 0;
+      padding:28px 24px 40px;width:100%;max-width:640px;
+      animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════
+     LOGIN SCREEN
+══════════════════════════ -->
+<div id="screen-login">
+  <div class="ray ray-1"></div>
+  <div class="ray ray-2"></div>
+  <div class="ray ray-3"></div>
+
+  <div class="auth-card">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <text x="18" y="27" text-anchor="middle" font-family="Cinzel,serif" font-size="22" font-weight="500" fill="white">H</text>
+        </svg>
+      </div>
+      <div class="logo-name">Halleluya</div>
+      <div class="logo-verse">"Si dos se ponen de acuerdo en la tierra,<br>mi Padre lo hará en el cielo" — Mat 18:19</div>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')" data-i18n="login_tab">Iniciar sesión</div>
+      <div class="auth-tab" id="tab-register" onclick="switchTab('register')" data-i18n="register_tab">Registrarse</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="panel active" id="panel-login">
+      <div class="error-box" id="err-login"></div>
+      <div class="form-group">
+        <label class="form-label">Correo</label>
+        <input class="form-input" id="login-email" type="email" placeholder="tu@correo.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="forgot"><a href="#">¿Olvidaste tu contraseña?</a></div>
+      <button class="btn-primary" id="btn-login" data-label="Entrar" data-i18n="btn_login">Entrar</button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">o continúa con</div><div class="divider-line"></div></div>
+      <button class="btn-google" id="btn-google-login">
+        <svg class="google-svg" width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Continuar con Google
+      </button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="panel" id="panel-register">
+      <div class="error-box" id="err-register"></div>
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="Tu nombre"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="tu@correo.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="Mínimo 8 caracteres" onkeydown="if(event.key==='Enter')doRegister()"/>
+      </div>
+      <button class="btn-primary" id="btn-register" data-label="Crear cuenta" data-i18n="btn_register">Crear cuenta</button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">o continúa con</div><div class="divider-line"></div></div>
+      <button class="btn-google" id="btn-google-register">
+        <svg class="google-svg" width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Registrarse con Google
+      </button>
+      <div class="footer-link">Al registrarte aceptas nuestros <a href="#">Términos de uso</a></div>
+    </div>
+  </div>
+  <div class="bottom-verse" data-i18n="bottom_verse">Una comunidad mundial unida en oración 🙏</div>
+</div>
+
+<!-- ══════════════════════════
+     ONBOARDING SCREEN
+══════════════════════════ -->
+<div id="screen-onboarding">
+  <div class="ray ray-1"></div>
+  <div class="ray ray-2"></div>
+
+  <div class="ob-steps">
+    <div class="ob-step-dot active" id="dot-0"></div>
+    <div class="ob-step-dot" id="dot-1"></div>
+    <div class="ob-step-dot" id="dot-2"></div>
+  </div>
+
+  <div class="ob-slide active" id="ob-0">
+    <div class="ob-icon">🙏</div>
+    <div class="ob-title" data-i18n="ob1_title">Halleluya</div>
+    <div class="ob-desc" data-i18n="ob1_desc">Una comunidad mundial unida en oración. Comparte tus peticiones y miles de hermanos orarán contigo.</div>
+    <button class="ob-btn" onclick="obNext()">Siguiente</button>
+    <button class="ob-skip" onclick="obFinish()">Saltar</button>
+  </div>
+
+  <div class="ob-slide" id="ob-1">
+    <div class="ob-icon">✨</div>
+    <div class="ob-title" data-i18n="ob2_title">Testimonios de fe</div>
+    <div class="ob-desc">Cuando Dios responda tu oración, comparte tu testimonio. Tu historia puede fortalecer la fe de otros.</div>
+    <button class="ob-btn" onclick="obNext()">Siguiente</button>
+    <button class="ob-skip" onclick="obFinish()">Saltar</button>
+  </div>
+
+  <div class="ob-slide" id="ob-2">
+    <div class="ob-icon">🌍</div>
+    <div class="ob-title" data-i18n="ob3_title">Comunidad global</div>
+    <div class="ob-desc">"Si dos se ponen de acuerdo en la tierra, mi Padre lo hará en el cielo." — Mateo 18:19</div>
+    <button class="ob-btn" onclick="obFinish()">¡Comenzar!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     APP SCREEN
+══════════════════════════ -->
+<div id="screen-app">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-title">Halleluya</div>
+    <div class="topbar-right" style="display:flex;align-items:center;gap:8px;">
+      <button class="lang-selector" id="lang-btn" onclick="toggleLangMenu()"><img id="lang-current-flag" src="https://flagcdn.com/24x18/es.png" style="width:22px;height:16px;border-radius:2px;display:block;"/></button>
+      <button class="avatar-btn" id="avatar-btn" onclick="toggleUserMenu()">?</button>
+    </div>
+  </div>
+  <div class="lang-menu" id="lang-menu">
+    <button class="lang-option active" onclick="setLang('es')" title="Español"><img src="https://flagcdn.com/24x18/es.png" alt="ES"/></button>
+    <button class="lang-option" onclick="setLang('en')" title="English"><img src="https://flagcdn.com/24x18/gb.png" alt="EN"/></button>
+    <button class="lang-option" onclick="setLang('pt')" title="Português"><img src="https://flagcdn.com/24x18/br.png" alt="PT"/></button>
+    <button class="lang-option" onclick="setLang('fr')" title="Français"><img src="https://flagcdn.com/24x18/fr.png" alt="FR"/></button>
+    <button class="lang-option" onclick="setLang('zh')" title="中文"><img src="https://flagcdn.com/24x18/cn.png" alt="ZH"/></button>
+    <button class="lang-option" onclick="setLang('ru')" title="Русский"><img src="https://flagcdn.com/24x18/ru.png" alt="RU"/></button>
+  </div>
+
+  <!-- User menu dropdown -->
+  <div class="user-menu" id="user-menu">
+    <div class="user-menu-name" id="user-menu-name">Usuario</div>
+    <div class="user-menu-email" id="user-menu-email"></div>
+    <div class="user-menu-section">Mi contenido</div>
+    <button class="user-menu-item" onclick="goToMyPrayers()">🙏 Mis oraciones</button>
+    <button class="user-menu-item" onclick="goToMyTestimonies()">✨ Mis testimonios</button>
+    <div class="user-menu-section">Comunidad</div>
+    <button class="user-menu-item" onclick="openOfrendaModal();toggleUserMenu(true);">🙌 Ofrenda</button>
+    <div class="user-menu-divider"></div>
+    <button class="user-menu-item danger" onclick="doSignOut()">Cerrar sesión</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="app-tabs">
+    <div class="app-tab active" onclick="switchAppTab('prayers')" data-i18n="tab_prayers">🙏 Oraciones</div>
+    <div class="app-tab" onclick="switchAppTab('testimonies')" data-i18n="tab_testimonies">🕊️ Testimonios</div>
+  </div>
+
+  <!-- Prayers feed -->
+  <div id="tab-prayers">
+    <div style="background:var(--sky);color:rgba(255,255,255,.9);text-align:center;padding:10px 20px;font-size:12px;font-style:italic;letter-spacing:.3px;">
+      <span data-i18n="banner_prayers">Cada Amén es una promesa de oración 🙏</span>
+    </div>
+    <div class="feed" id="prayers-feed">
+      <div class="loading">Cargando oraciones...</div>
+    </div>
+    <div class="ofrenda-banner" id="ofrenda-banner-prayers" style="display:none;">
+      <div class="ofrenda-banner-text">
+        <strong>🙌 ¿Esta app ha sido de bendición para ti?</strong>
+        Puedes dejar una ofrenda voluntaria para apoyar este ministerio.
+      </div>
+      <button class="btn-ofrenda" onclick="openOfrendaModal()">Ofrendar</button>
+    </div>
+  </div>
+
+  <!-- Mis oraciones feed -->
+  <div id="tab-mine" style="display:none;">
+    <div style="background:var(--sky);color:rgba(255,255,255,.9);text-align:center;padding:10px 20px;font-size:12px;font-style:italic;letter-spacing:.3px;">
+      Aquí puedes seguir el impacto de tus peticiones 🙏
+    </div>
+    <div class="feed" id="mine-feed">
+      <div class="loading">Cargando tus oraciones...</div>
+    </div>
+  </div>
+
+  <!-- Testimonies feed -->
+  <div id="tab-testimonies" style="display:none;">
+    <div style="background:var(--sky);color:rgba(255,255,255,.9);text-align:center;padding:10px 20px;font-size:12px;font-style:italic;letter-spacing:.3px;">
+      <span data-i18n="banner_testimonies">Cada testimonio es prueba de que Dios escucha 🕊️</span>
+    </div>
+    <div class="feed" id="testimonies-feed">
+      <div class="loading">Cargando testimonios... ✨</div>
+    </div>
+    <div class="ofrenda-banner" id="ofrenda-banner" style="display:none;">
+      <div class="ofrenda-banner-text">
+        <strong>🙌 ¿Esta app ha sido de bendición para ti?</strong>
+        Puedes dejar una ofrenda voluntaria para apoyar este ministerio.
+      </div>
+      <button class="btn-ofrenda" onclick="openOfrendaModal()">Ofrendar</button>
+    </div>
+  </div>
+
+  <!-- Mis testimonios feed -->
+  <div id="tab-mine-testimonies" style="display:none;">
+    <div style="background:var(--sky);color:rgba(255,255,255,.9);text-align:center;padding:10px 20px;font-size:12px;font-style:italic;letter-spacing:.3px;">
+      Tus testimonios inspiran a la comunidad ✨
+    </div>
+    <div class="feed" id="mine-testimonies-feed">
+      <div class="loading">Cargando tus testimonios...</div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fab-btn" onclick="fabClick()" title="Nueva oración">+</button>
+
+</div>
+
+<!-- ══════════════════════════
+     MODAL — Nueva oración
+══════════════════════════ -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nueva oración</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Categoría</label>
+      <select class="select-input" id="prayer-cat">
+        <option value="General">General</option>
+        <option value="Salud">Salud</option>
+        <option value="Familia">Familia</option>
+        <option value="Trabajo">Trabajo</option>
+        <option value="Finanzas">Finanzas</option>
+        <option value="Relaciones">Relaciones</option>
+        <option value="Espiritual">Espiritual</option>
+        <option value="Gratitud">Gratitud</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu petición</label>
+      <textarea class="form-input" id="prayer-text" placeholder="¿Por qué necesitas oración hoy?" rows="4"></textarea>
+    </div>
+    <label class="anon-toggle">
+      <input type="checkbox" id="prayer-anon"/>
+      <span>Publicar de forma anónima</span>
+    </label>
+    <div class="error-box" id="err-modal"></div>
+    <button class="btn-primary" id="btn-post" data-label="Publicar oración" data-i18n="btn_post_prayer" onclick="postPrayer()">Publicar oración</button>
+  </div>
+</div>
+
+<!-- Modal — Nuevo testimonio -->
+<div class="modal-overlay" id="modal-testimony" onclick="handleTestimonyOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Compartir testimonio</div>
+      <button class="modal-close" onclick="closeTestimonyModal()">✕</button>
+    </div>
+
+    <!-- Vincular oración existente -->
+    <div class="form-group">
+      <label class="form-label">¿Viene de una oración tuya? (opcional)</label>
+      <select class="select-input" id="test-linked-prayer" onchange="onLinkedPrayerChange()">
+        <option value="">— Testimonio libre —</option>
+      </select>
+    </div>
+    <div id="test-linked-preview" style="display:none;" class="linked-prayer">
+      <div class="linked-prayer-label">Petición vinculada</div>
+      <div id="test-linked-text"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="test-title" type="text" placeholder="¿Cómo obró Dios en tu vida?"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tu testimonio</label>
+      <textarea class="form-input" id="test-text" placeholder="Cuéntanos lo que Dios hizo..." rows="4"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Foto (opcional)</label>
+      <input type="file" id="test-img" accept="image/*" style="width:100%;padding:10px;border:1.5px dashed var(--mist);border-radius:12px;font-family:'Lato',sans-serif;font-size:13px;color:var(--text-soft);cursor:pointer;background:var(--cloud);"/>
+      <div id="test-img-preview" style="margin-top:8px;display:none;">
+        <img id="test-img-thumb" style="width:100%;height:140px;object-fit:cover;border-radius:10px;" />
+      </div>
+    </div>
+    <div class="error-box" id="err-testimony"></div>
+    <button class="btn-primary" id="btn-post-testimony" data-label="Publicar testimonio" data-i18n="btn_post_testimony" onclick="postTestimony()">Publicar testimonio</button>
+  </div>
+</div>
+
+<!-- Answered Prayer Modal -->
+<div class="modal-overlay" id="modal-answered" onclick="if(event.target===this)closeAnsweredModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🙌 Dios respondió</div>
+      <button class="modal-close" onclick="closeAnsweredModal()">✕</button>
+    </div>
+    <div class="linked-prayer" id="answered-prayer-preview">
+      <div class="linked-prayer-label">Tu petición original</div>
+      <div id="answered-prayer-text"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">¿Cómo obró Dios?</label>
+      <input class="form-input" id="answered-title" type="text" placeholder="Ej: Sanidad completa, trabajo nuevo..."/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cuéntanos tu testimonio</label>
+      <textarea class="form-input" id="answered-text" placeholder="Comparte cómo Dios respondió tu oración..." rows="4"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Foto (opcional)</label>
+      <input type="file" id="answered-img" accept="image/*" style="width:100%;padding:10px;border:1.5px dashed var(--mist);border-radius:12px;font-family:'Lato',sans-serif;font-size:13px;color:var(--text-soft);cursor:pointer;background:var(--cloud);"/>
+      <div id="answered-img-preview" style="margin-top:8px;display:none;">
+        <img id="answered-img-thumb" style="width:100%;height:120px;object-fit:cover;border-radius:10px;"/>
+      </div>
+    </div>
+    <div class="error-box" id="err-answered"></div>
+    <button class="btn-primary" id="btn-post-answered" data-label="✨ Publicar testimonio" onclick="postAnswered()">✨ Publicar testimonio</button>
+  </div>
+</div>
+
+<!-- Ofrenda Modal -->
+<div class="ofrenda-modal-overlay" id="ofrenda-overlay" onclick="if(event.target===this)closeOfrendaModal()">
+  <div class="ofrenda-modal">
+    <div class="ofrenda-icon">🙏</div>
+    <div class="ofrenda-title">Apoya este ministerio</div>
+    <div class="ofrenda-msg">Tu ofrenda mantiene viva esta misión de fe.<br>Gracias por ser parte de esta comunidad.</div>
+    <button class="btn-ofrenda-confirm" onclick="goToOfrenda()">🙌 Quiero ofrendar</button>
+    <button class="btn-ofrenda-cancel" onclick="closeOfrendaModal()">Ahora no</button>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="edit-modal-overlay" id="edit-overlay" onclick="if(event.target===this)closeEditModal()">
+  <div class="edit-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="edit-modal-title">Editar</div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div id="edit-modal-body"></div>
+    <div class="error-box" id="err-edit"></div>
+    <button class="btn-primary" id="btn-save-edit" data-label="Guardar cambios" onclick="saveEdit()">Guardar cambios</button>
+  </div>
+</div>
+
+<div class="share-toast" id="share-toast">🔗 Link copiado</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, onSnapshot, getDoc, deleteDoc,
+    doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp({
+    apiKey: "AIzaSyCvSBu0JuEaPMATbWP185oUytKJWD740Ks",
+    authDomain: "halleluya-app-a3b60.firebaseapp.com",
+    projectId: "halleluya-app-a3b60",
+    storageBucket: "halleluya-app-a3b60.firebasestorage.app",
+    messagingSenderId: "836432627828",
+    appId: "1:836432627828:web:2031852579f7a5be1ee921"
+  });
+  const auth     = getAuth(app);
+  const db       = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+  let   currentUser = null;
+  let   unsubPrayers = null;
+
+  // ── Error messages ──
+  const ERR = {
+    'auth/user-not-found':       'No existe cuenta con ese correo.',
+    'auth/wrong-password':       'Contraseña incorrecta.',
+    'auth/invalid-credential':   'Correo o contraseña incorrectos.',
+    'auth/invalid-email':        'Correo inválido.',
+    'auth/email-already-in-use': 'Ese correo ya tiene una cuenta.',
+    'auth/weak-password':        'La contraseña debe tener al menos 6 caracteres.',
+    'auth/too-many-requests':    'Demasiados intentos. Espera un momento.',
+  };
+
+  function showErr(id, msg) { const e=document.getElementById('err-'+id); e.textContent=msg; e.style.display='block'; }
+  function clearErr()       { document.querySelectorAll('.error-box').forEach(e=>e.style.display='none'); }
+  function setBtn(id,l)     { const b=document.getElementById(id); b.disabled=l; b.textContent=l?'Un momento...':b.dataset.label; }
+
+  // ── Auth state ──
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('screen-login').style.display = 'none';
+      document.getElementById('screen-app').style.display   = 'flex';
+      // Avatar initials
+      const initials = (user.displayName || user.email || '?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      document.getElementById('avatar-btn').textContent = initials;
+      document.getElementById('user-menu-name').textContent = user.displayName || user.email;
+      document.getElementById('user-menu-email').textContent = user.email;
+      loadPrayers();
+      seedIfEmpty();
+      // Show onboarding only first time
+      try {
+        if (!localStorage.getItem('halleluya_ob_done')) showOnboarding();
+      } catch(e) {}
+    } else {
+      document.getElementById('screen-login').style.display = 'flex';
+      document.getElementById('screen-app').style.display   = 'none';
+      if (unsubPrayers) { unsubPrayers(); unsubPrayers = null; }
+    }
+  });
+
+  // ── Render a single prayer card ──
+  function renderCard(docSnap, isMine) {
+    const d = docSnap.data();
+    const id = docSnap.id;
+    const hasAmen   = currentUser && d.amenUsers && d.amenUsers.includes(currentUser.uid);
+    const amenCount = (d.amenUsers || []).length;
+    const timeAgo   = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
+    const authorName = d.isAnon ? 'Anónimo' : (d.authorName || 'Hermano/a');
+    const initials   = authorName === 'Anónimo' ? '?' : authorName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const amenLabel  = amenCount === 0 ? 'Sé el primero en orar' : amenCount === 1 ? '1 hermano orando' : amenCount + ' hermanos orando';
+
+    // In "mine" tab: show prayer count + "Dios respondió" button
+    const isAnswered = d.answered === true;
+    const actionsHtml = isMine
+      ? `<div style="display:flex;flex-direction:column;gap:10px;width:100%;">
+           <div class="mine-stat">
+             <span class="mine-stat-num">${amenCount}</span>
+             <span class="mine-stat-lbl">${amenCount === 1 ? 'hermano orando por ti' : 'hermanos orando por ti'}</span>
+           </div>
+           ${!isAnswered
+             ? `<button class="btn-answered" onclick="openAnsweredModal('${id}','${escHtml(d.text||'')}')">🙌 Dios respondió — compartir testimonio</button>`
+             : `<span class="answered-badge">✅ Oración respondida</span>`
+           }
+         </div>`
+      : `<button class="btn-amen ${hasAmen?'active':''}" onclick="toggleAmen('${id}')">
+           <span class="amen-tooltip">${hasAmen ? 'Ya estás orando' : 'Oraré por ti'}</span>
+           🙏 Amén
+         </button>
+         <span class="amen-count">${amenLabel}</span>
+         ${d.isAnon ? '<span class="anon-badge">Anónimo</span>' : ''}`;
+
+    const isOwner = currentUser && d.authorId === currentUser.uid;
+    const isAnswered2 = d.answered === true;
+    const card = document.createElement('div');
+    card.className = 'pcard' + (isAnswered2 ? ' answered' : '');
+    const prayerDataAttr = isOwner ? JSON.stringify({text: d.text||'', category: d.category||'General'}).replace(/"/g, "&quot;") : '';
+    card.innerHTML = `
+      <div class="pcard-top">
+        <div class="pcard-avatar">${initials}</div>
+        <div>
+          <div class="pcard-name">${isMine ? 'Mi oración' : authorName}</div>
+          <div class="pcard-time">${timeAgo} ${d.lang ? '<span class="flag-badge" title="'+d.lang+'">' + getLangFlag(d.lang) + '</span>' : ''}</div>
+        </div>
+        <div class="pcard-tag">${d.category || 'General'}</div>
+        ${isOwner ? `<div style="position:relative;margin-left:4px;">
+          <button class="card-menu-btn" onclick="toggleCardMenu('p${id}',event)">···</button>
+          <div class="card-dropdown" id="cmenu-p${id}">
+            <button class="card-dropdown-item" data-id="${id}" data-type="prayer" data-payload="${prayerDataAttr}" onclick="openEditFromAttr(this)">✏️ Editar</button>
+            <button class="card-dropdown-item del" onclick="deleteItem('prayer','${id}')">🗑 Eliminar</button>
+          </div>
+        </div>` : ''}
+      </div>
+      <div class="pcard-text">${escHtml(d.text || '')}</div>
+      <div class="pcard-actions">
+        ${actionsHtml}
+        <button class="btn-share" onclick="shareItem('prayer','${id}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </button>
+      </div>`;
+    return card;
+  }
+
+  // ── Load ALL prayers (community feed) ──
+  function loadPrayers() {
+    const feed = document.getElementById('prayers-feed');
+    feed.innerHTML = '<div class="loading">Cargando oraciones... 🙏</div>';
+    const q = query(collection(db, 'prayers'), orderBy('createdAt', 'desc'));
+    unsubPrayers = onSnapshot(q, snap => {
+      if (snap.empty) {
+        feed.innerHTML = `<div class="empty"><div class="empty-icon">🙏</div><div class="empty-text">Aún no hay oraciones.<br>¡Sé el primero en compartir la tuya!</div></div>`;
+        return;
+      }
+      feed.innerHTML = '';
+      snap.forEach(docSnap => feed.appendChild(renderCard(docSnap, false)));
+    });
+  }
+
+  // ── Load MY prayers ──
+  function loadMyPrayers() {
+    const feed = document.getElementById('mine-feed');
+    feed.innerHTML = '<div class="loading">Cargando tus oraciones... 🙏</div>';
+    const q = query(collection(db, 'prayers'), orderBy('createdAt', 'desc'));
+    onSnapshot(q, snap => {
+      const mine = snap.docs.filter(d => d.data().authorId === currentUser.uid);
+      if (mine.length === 0) {
+        feed.innerHTML = `<div class="empty"><div class="empty-icon">🕊️</div><div class="empty-text">Aún no tienes peticiones.<br>Comparte tu primera oración con la comunidad.</div></div>`;
+        return;
+      }
+      feed.innerHTML = '';
+      mine.forEach(docSnap => feed.appendChild(renderCard(docSnap, true)));
+    });
+  }
+
+  // ── Toggle Amén ──
+  window.toggleAmen = async function(prayerId) {
+    if (!currentUser) return;
+    const ref = doc(db, 'prayers', prayerId);
+    const snap = await getDocs(query(collection(db,'prayers')));
+    const pDoc = snap.docs.find(d=>d.id===prayerId);
+    if (!pDoc) return;
+    const users = pDoc.data().amenUsers || [];
+    if (users.includes(currentUser.uid)) {
+      await updateDoc(ref, { amenUsers: arrayRemove(currentUser.uid) });
+    } else {
+      await updateDoc(ref, { amenUsers: arrayUnion(currentUser.uid) });
+    }
+  };
+
+  // ── Post prayer ──
+  window.postPrayer = async function() {
+    clearErr();
+    const text = document.getElementById('prayer-text').value.trim();
+    const cat  = document.getElementById('prayer-cat').value;
+    const anon = document.getElementById('prayer-anon').checked;
+    if (!text) { showErr('modal','Escribe tu petición de oración.'); return; }
+    setBtn('btn-post', true);
+    try {
+      await addDoc(collection(db,'prayers'), {
+        text,
+        category:   cat,
+        isAnon:     anon,
+        authorId:   currentUser.uid,
+        authorName: anon ? null : (currentUser.displayName || currentUser.email),
+        amenUsers:  [],
+        lang: currentLang,
+        createdAt:  serverTimestamp(),
+      });
+      document.getElementById('prayer-text').value = '';
+      document.getElementById('prayer-anon').checked = false;
+      closeModal();
+    } catch(e) {
+      showErr('modal','Error al publicar. Intenta de nuevo.');
+    }
+    setBtn('btn-post', false);
+  };
+
+  // ── Auth actions ──
+  window.switchTab = function(tab) {
+    clearErr();
+    document.getElementById('tab-login').classList.toggle('active', tab==='login');
+    document.getElementById('tab-register').classList.toggle('active', tab==='register');
+    document.getElementById('panel-login').classList.toggle('active', tab==='login');
+    document.getElementById('panel-register').classList.toggle('active', tab==='register');
+  };
+
+  window.doLogin = async function() {
+    clearErr();
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email||!pass) { showErr('login','Completa todos los campos.'); return; }
+    setBtn('btn-login',true);
+    try { await signInWithEmailAndPassword(auth,email,pass); }
+    catch(e) { showErr('login',ERR[e.code]||'Error al iniciar sesión.'); setBtn('btn-login',false); }
+  };
+
+  window.doRegister = async function() {
+    clearErr();
+    const name  = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass  = document.getElementById('reg-pass').value;
+    if (!name||!email||!pass) { showErr('register','Completa todos los campos.'); return; }
+    if (pass.length<8) { showErr('register','Mínimo 8 caracteres.'); return; }
+    setBtn('btn-register',true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth,email,pass);
+      await updateProfile(cred.user,{displayName:name});
+    } catch(e) { showErr('register',ERR[e.code]||'Error al registrarse.'); setBtn('btn-register',false); }
+  };
+
+  window.doGoogle = async function() {
+    clearErr();
+    try { await signInWithPopup(auth,provider); }
+    catch(e) { if(e.code!=='auth/popup-closed-by-user') showErr('login',ERR[e.code]||'Error con Google.'); }
+  };
+
+  window.doSignOut = async function() {
+    await signOut(auth);
+    toggleUserMenu(true);
+  };
+
+  // ── Modal ──
+  window.openModal  = () => document.getElementById('modal').classList.add('open');
+  window.closeModal = () => { document.getElementById('modal').classList.remove('open'); clearErr(); };
+  window.handleOverlayClick = e => { if(e.target===document.getElementById('modal')) closeModal(); };
+
+  // ── App tabs ──
+  window.switchAppTab = function(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.app-tab').forEach((t,i)=>t.classList.toggle('active',
+      (i===0&&tab==='prayers')||(i===1&&tab==='testimonies')
+    ));
+    const tabs = ['tab-prayers','tab-testimonies','tab-mine','tab-mine-testimonies'];
+    tabs.forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+    const show = document.getElementById('tab-'+tab);
+    if (show) show.style.display = 'block';
+    if (tab==='testimonies')      { loadTestimonies(); showOFrendaBanner(); }
+    if (tab==='mine')             loadMyPrayers();
+    if (tab==='mine-testimonies') loadMyTestimonies();
+    const fab = document.getElementById('fab-btn');
+    fab.style.display = ['prayers','testimonies'].includes(tab) ? 'flex' : 'none';
+    fab.title = tab==='testimonies' ? 'Nuevo testimonio' : 'Nueva oración';
+  };
+
+  // Profile menu navigation
+  window.goToMyPrayers = function() {
+    toggleUserMenu(true);
+    document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));
+    const tabs = ['tab-prayers','tab-testimonies','tab-mine','tab-mine-testimonies'];
+    tabs.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+    document.getElementById('tab-mine').style.display = 'block';
+    activeTab = 'mine';
+    document.getElementById('fab-btn').style.display = 'none';
+    loadMyPrayers();
+  };
+  window.goToMyTestimonies = function() {
+    toggleUserMenu(true);
+    document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));
+    const tabs = ['tab-prayers','tab-testimonies','tab-mine','tab-mine-testimonies'];
+    tabs.forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+    document.getElementById('tab-mine-testimonies').style.display = 'block';
+    activeTab = 'mine-testimonies';
+    document.getElementById('fab-btn').style.display = 'flex';
+    document.getElementById('fab-btn').title = 'Nuevo testimonio';
+    loadMyTestimonies();
+  };
+
+  // ── User menu ──
+  window.toggleUserMenu = function(forceClose=false) {
+    const m = document.getElementById('user-menu');
+    if (forceClose) { m.classList.remove('open'); return; }
+    m.classList.toggle('open');
+  };
+  // consolidated into unified click handler below
+
+  // ── Testimony functions ──
+  function loadTestimonies() {
+    const feed = document.getElementById('testimonies-feed');
+    feed.innerHTML = '<div class="loading">Cargando testimonios... ✨</div>';
+    const q = query(collection(db,'testimonies'), orderBy('createdAt','desc'));
+    onSnapshot(q, snap => {
+      if (snap.empty) {
+        feed.innerHTML = `<div class="empty"><div class="empty-icon">✨</div><div class="empty-text">Aún no hay testimonios.<br>¡Sé el primero en compartir lo que Dios hizo!</div></div>`;
+        return;
+      }
+      feed.innerHTML = '';
+      snap.forEach(docSnap => feed.appendChild(buildTestimonyCard(docSnap)));
+    });
+  }
+
+  window.toggleAleluya = async function(id) {
+    if (!currentUser) return;
+    const ref  = doc(db, 'testimonies', id);
+    const snap = await getDocs(query(collection(db,'testimonies')));
+    const tDoc = snap.docs.find(d=>d.id===id);
+    if (!tDoc) return;
+    const users = tDoc.data().alleluyaUsers || [];
+    if (users.includes(currentUser.uid)) {
+      await updateDoc(ref, { alleluyaUsers: arrayRemove(currentUser.uid) });
+    } else {
+      await updateDoc(ref, { alleluyaUsers: arrayUnion(currentUser.uid) });
+    }
+  };
+
+  window.openTestimonyModal = async function() {
+    // Load user's own prayers into the select
+    const sel = document.getElementById('test-linked-prayer');
+    sel.innerHTML = '<option value="">— Testimonio libre —</option>';
+    try {
+      const q = query(collection(db,'prayers'), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      snap.docs
+        .filter(d => d.data().authorId === currentUser.uid && !d.data().answered)
+        .forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = (d.data().text || '').substring(0, 60) + '...';
+          opt.dataset.text = d.data().text || '';
+          sel.appendChild(opt);
+        });
+    } catch(e) {}
+    document.getElementById('test-linked-preview').style.display = 'none';
+    document.getElementById('modal-testimony').classList.add('open');
+  };
+  window.closeTestimonyModal = () => {
+    document.getElementById('modal-testimony').classList.remove('open');
+    document.getElementById('test-linked-preview').style.display = 'none';
+    clearErr();
+  };
+  window.onLinkedPrayerChange = function() {
+    const sel  = document.getElementById('test-linked-prayer');
+    const prev = document.getElementById('test-linked-preview');
+    const txt  = document.getElementById('test-linked-text');
+    const opt  = sel.options[sel.selectedIndex];
+    if (sel.value && opt.dataset.text) {
+      txt.textContent = opt.dataset.text;
+      prev.style.display = 'block';
+    } else {
+      prev.style.display = 'none';
+    }
+  };
+  window.handleTestimonyOverlay = e => { if(e.target===document.getElementById('modal-testimony')) closeTestimonyModal(); };
+
+  // Image preview
+  document.getElementById('test-img').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const preview = document.getElementById('test-img-preview');
+    const thumb   = document.getElementById('test-img-thumb');
+    const reader  = new FileReader();
+    reader.onload = e => { thumb.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(file);
+  });
+
+  window.postTestimony = async function() {
+    clearErr();
+    const title = document.getElementById('test-title').value.trim();
+    const text  = document.getElementById('test-text').value.trim();
+    const file  = document.getElementById('test-img').files[0];
+    if (!title) { showErr('testimony','Escribe un título para tu testimonio.'); return; }
+    if (!text)  { showErr('testimony','Cuéntanos tu testimonio.'); return; }
+    setBtn('btn-post-testimony', true);
+    let imageBase64 = null;
+    if (file) {
+      imageBase64 = await new Promise(res => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.readAsDataURL(file);
+      });
+    }
+    const linkedPrayerId = document.getElementById('test-linked-prayer').value || null;
+    try {
+      await addDoc(collection(db,'testimonies'), {
+        title, text, imageBase64,
+        linkedPrayerId,
+        authorId:   currentUser.uid,
+        authorName: currentUser.displayName || currentUser.email,
+        alleluyaUsers: [],
+        commentCount: 0,
+        lang: currentLang,
+        createdAt:  serverTimestamp(),
+      });
+      // Mark linked prayer as answered if selected
+      if (linkedPrayerId) {
+        await updateDoc(doc(db,'prayers', linkedPrayerId), { answered: true });
+      }
+      document.getElementById('test-title').value = '';
+      document.getElementById('test-text').value  = '';
+      document.getElementById('test-img').value   = '';
+      document.getElementById('test-linked-prayer').value = '';
+      document.getElementById('test-linked-preview').style.display = 'none';
+      document.getElementById('test-img-preview').style.display = 'none';
+      closeTestimonyModal();
+    } catch(e) {
+      showErr('testimony','Error al publicar. Intenta de nuevo.');
+    }
+    setBtn('btn-post-testimony', false);
+  };
+
+  // FAB context-aware
+  let activeTab = 'prayers';
+  window.fabClick = function() {
+    if (activeTab === 'testimonies') openTestimonyModal();
+    else openModal();
+  };
+
+  // ── My Testimonies ──
+  function loadMyTestimonies() {
+    const feed = document.getElementById('mine-testimonies-feed');
+    feed.innerHTML = '<div class="loading">Cargando tus testimonios... ✨</div>';
+    const q = query(collection(db,'testimonies'), orderBy('createdAt','desc'));
+    onSnapshot(q, snap => {
+      const mine = snap.docs.filter(d => d.data().authorId === currentUser.uid);
+      if (mine.length === 0) {
+        feed.innerHTML = `<div class="empty"><div class="empty-icon">✨</div><div class="empty-text">Aún no tienes testimonios.<br>¡Comparte lo que Dios hizo en tu vida!</div></div>`;
+        return;
+      }
+      feed.innerHTML = '';
+      mine.forEach(docSnap => feed.appendChild(buildTestimonyCard(docSnap)));
+    });
+  }
+
+  // ── Build testimony card (shared by community + mine feeds) ──
+  function buildTestimonyCard(docSnap) {
+    const d   = docSnap.data();
+    const id  = docSnap.id;
+    const hasAleluya = currentUser && d.alleluyaUsers && d.alleluyaUsers.includes(currentUser.uid);
+    const alleCount  = (d.alleluyaUsers || []).length;
+    const timeAgo    = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
+    const authorName = d.authorName || 'Hermano/a';
+    const initials   = authorName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const alleLabel  = alleCount === 0 ? 'Sé el primero en celebrar' : alleCount === 1 ? '1 persona celebrando' : alleCount + ' personas celebrando';
+    const commentCount = d.commentCount || 0;
+
+    const isOwner = currentUser && d.authorId === currentUser.uid;
+    const testimonyDataAttr = isOwner ? JSON.stringify({text: d.text||'', title: d.title||''}).replace(/"/g, '&quot;') : '';
+    const card = document.createElement('div');
+    card.className = 'tcard';
+    card.id = 'tcard-' + id;
+    card.innerHTML = `
+      ${d.imageBase64 ? `<img class="tcard-img" src="${d.imageBase64}" alt="Testimonio"/>` : ''}
+      <div class="tcard-body">
+        <div class="tcard-top">
+          <div class="pcard-avatar">${initials}</div>
+          <div>
+            <div class="pcard-name">${authorName}</div>
+            <div class="pcard-time">${timeAgo} ${d.lang ? '<span class="flag-badge">' + getLangFlag(d.lang) + '</span>' : ''}</div>
+          </div>
+          ${isOwner ? `<div style="position:relative;margin-left:auto;">
+            <button class="card-menu-btn" onclick="toggleCardMenu('t${id}',event)">···</button>
+            <div class="card-dropdown" id="cmenu-t${id}">
+              <button class="card-dropdown-item" data-id="${id}" data-type="testimony" data-payload="${testimonyDataAttr}" onclick="openEditFromAttr(this)">✏️ Editar</button>
+              <button class="card-dropdown-item del" onclick="deleteItem('testimony','${id}')">🗑 Eliminar</button>
+            </div>
+          </div>` : ''}
+        </div>
+        <div class="tcard-title">${escHtml(d.title || '')}</div>
+        <div class="tcard-text">${escHtml(d.text || '')}</div>
+        <div class="pcard-actions">
+          <button class="btn-aleluya ${hasAleluya?'active':''}" onclick="toggleAleluya('${id}')">
+            <span class="amen-tooltip">${hasAleluya ? 'Ya celebraste' : '¡Celebrar!'}</span>
+            🙌 Aleluya
+          </button>
+          <span class="aleluya-count">${alleLabel}</span>
+          <button class="btn-share" onclick="shareItem('testimony','${id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+        </div>
+        <div class="comments-area">
+          <button class="comment-toggle" onclick="toggleComments('${id}')">
+            💬 ${commentCount === 0 ? 'Sé el primero en comentar' : commentCount === 1 ? '1 comentario' : commentCount + ' comentarios'}
+          </button>
+          <div class="comments-list" id="comments-${id}" style="display:none;"></div>
+          <div class="comment-input-row" id="comment-input-${id}" style="display:none;">
+            <input class="comment-input" id="comment-text-${id}" placeholder="Escribe algo edificante..." onkeydown="if(event.key==='Enter') sendComment('${id}')"/>
+            <button class="comment-send" onclick="sendComment('${id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    return card;
+  }
+
+  // ── Toggle comments section ──
+  window.toggleComments = async function(testId) {
+    const list  = document.getElementById('comments-' + testId);
+    const input = document.getElementById('comment-input-' + testId);
+    const isOpen = list.style.display !== 'none';
+    if (isOpen) {
+      list.style.display  = 'none';
+      input.style.display = 'none';
+      return;
+    }
+    list.style.display  = 'flex';
+    input.style.display = 'flex';
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-soft);padding:4px 0;">Cargando...</div>';
+    const q = query(collection(db,'testimonies',testId,'comments'), orderBy('createdAt','asc'));
+    const snap = await getDocs(q);
+    list.innerHTML = '';
+    const docs = snap.docs;
+    const toShow = docs.slice(-2);
+    if (docs.length > 2) {
+      const more = document.createElement('button');
+      more.className = 'show-more-comments';
+      more.textContent = `Ver los ${docs.length - 2} comentarios anteriores`;
+      more.onclick = async () => {
+        more.remove();
+        docs.slice(0, docs.length-2).reverse().forEach(c => list.prepend(buildComment(c)));
+      };
+      list.appendChild(more);
+    }
+    toShow.forEach(c => list.appendChild(buildComment(c)));
+  };
+
+  function buildComment(docSnap) {
+    const d = docSnap.data();
+    const name     = d.authorName || 'Hermano/a';
+    const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const timeAgo  = d.createdAt ? formatTime(d.createdAt.toDate()) : '';
+    const div = document.createElement('div');
+    div.className = 'comment-item';
+    div.innerHTML = `
+      <div class="comment-avatar">${initials}</div>
+      <div class="comment-bubble">
+        <div class="comment-author">${name}</div>
+        <div class="comment-text">${escHtml(d.text || '')}</div>
+        <div class="comment-time">${timeAgo}</div>
+      </div>`;
+    return div;
+  }
+
+  window.sendComment = async function(testId) {
+    if (!currentUser) return;
+    const input = document.getElementById('comment-text-' + testId);
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    const ref = doc(db,'testimonies',testId);
+    await addDoc(collection(db,'testimonies',testId,'comments'), {
+      text,
+      authorId:   currentUser.uid,
+      authorName: currentUser.displayName || currentUser.email,
+      createdAt:  serverTimestamp(),
+    });
+    await updateDoc(ref, { commentCount: (await getDocs(collection(db,'testimonies',testId,'comments'))).size });
+    // Refresh comments
+    toggleComments(testId);
+    toggleComments(testId);
+  };
+
+  // ── Share ──
+  const APP_URL = window.location.origin + window.location.pathname.replace('index.html','');
+
+  window.shareItem = async function(type, id) {
+    const url = APP_URL + '?share=' + type + '_' + id;
+    const text = type === 'prayer'
+      ? '🙏 Únete a orar por esta petición en Halleluya'
+      : '✨ Lee este testimonio de fe en Halleluya';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Halleluya', text, url });
+      } catch(e) { /* user cancelled */ }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('🔗 Link copiado al portapapeles');
+      } catch(e) {
+        showToast('📋 ' + url);
+      }
+    }
+  };
+
+  function showToast(msg) {
+    const t = document.getElementById('share-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── Ofrenda ──
+  const OFRENDA_URL = 'https://www.creem.io/payment/prod_ptycG85dnYaYjiF5b4QD8';
+  window.openOfrendaModal  = () => document.getElementById('ofrenda-overlay').classList.add('open');
+  window.closeOfrendaModal = () => document.getElementById('ofrenda-overlay').classList.remove('open');
+  window.goToOfrenda = function() {
+    closeOfrendaModal();
+    window.open(OFRENDA_URL, '_blank');
+  };
+
+  // Show ofrenda banner when testimonies tab loads
+  function showOFrendaBanner() {
+    const b = document.getElementById('ofrenda-banner');
+    if (b) setTimeout(() => b.style.display='flex', 1500);
+  }
+
+  // ── Edit / Delete ──
+  let editTarget = null; // { type: 'prayer'|'testimony', id, data }
+
+  window.toggleCardMenu = function(id, event) {
+    event.stopPropagation();
+    const menu = document.getElementById('cmenu-' + id);
+    document.querySelectorAll('.card-dropdown.open').forEach(m => { if(m!==menu) m.classList.remove('open'); });
+    menu.classList.toggle('open');
+  };
+
+  // consolidated into unified click handler below
+
+  window.openEditModal = function(type, id, data) {
+    editTarget = { type, id, data };
+    document.getElementById('edit-modal-title').textContent = type === 'prayer' ? 'Editar oración' : 'Editar testimonio';
+    const body = document.getElementById('edit-modal-body');
+    if (type === 'prayer') {
+      body.innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <select class="select-input" id="edit-cat">
+            ${['General','Salud','Familia','Trabajo','Finanzas','Relaciones','Espiritual','Gratitud']
+              .map(c=>`<option value="${c}" ${data.category===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tu petición</label>
+          <textarea class="form-input" id="edit-text" rows="4">${data.text||''}</textarea>
+        </div>`;
+    } else {
+      body.innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Título</label>
+          <input class="form-input" id="edit-title" type="text" value="${escHtml(data.title||'')}"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tu testimonio</label>
+          <textarea class="form-input" id="edit-text" rows="4">${data.text||''}</textarea>
+        </div>`;
+    }
+    document.getElementById('edit-overlay').classList.add('open');
+  };
+
+  window.openEditFromAttr = function(btn) {
+    const id      = btn.dataset.id;
+    const type    = btn.dataset.type;
+    const payload = btn.dataset.payload;
+    try {
+      const data = JSON.parse(payload.replace(/&quot;/g, '"'));
+      openEditModal(type, id, data);
+    } catch(e) { console.error('Edit parse error', e); }
+  };
+
+  window.closeEditModal = function() {
+    document.getElementById('edit-overlay').classList.remove('open');
+    editTarget = null;
+  };
+
+  window.saveEdit = async function() {
+    if (!editTarget) return;
+    const text = document.getElementById('edit-text').value.trim();
+    if (!text) { showErr('edit','El contenido no puede estar vacío.'); return; }
+    setBtn('btn-save-edit', true);
+    try {
+      const colName = editTarget.type === 'prayer' ? 'prayers' : 'testimonies';
+      const updates = { text };
+      if (editTarget.type === 'prayer') {
+        updates.category = document.getElementById('edit-cat').value;
+      } else {
+        updates.title = document.getElementById('edit-title').value.trim();
+      }
+      await updateDoc(doc(db, colName, editTarget.id), updates);
+      closeEditModal();
+    } catch(e) {
+      showErr('edit','Error al guardar. Intenta de nuevo.');
+    }
+    setBtn('btn-save-edit', false);
+  };
+
+  window.deleteItem = async function(type, id) {
+    if (!confirm('¿Seguro que quieres eliminar esto?')) return;
+    const colName = type === 'prayer' ? 'prayers' : 'testimonies';
+    try {
+      await deleteDoc(doc(db, colName, id));
+    } catch(e) { alert('Error al eliminar.'); }
+  };
+
+  // ── Onboarding ──
+  let obCurrent = 0;
+  function showOnboarding() {
+    document.getElementById('screen-onboarding').classList.add('open');
+  }
+  function hideOnboarding() {
+    document.getElementById('screen-onboarding').classList.remove('open');
+    try { localStorage.setItem('halleluya_ob_done', '1'); } catch(e) {}
+  }
+  window.obNext = function() {
+    const slides = document.querySelectorAll('.ob-slide');
+    const dots   = document.querySelectorAll('.ob-step-dot');
+    slides[obCurrent].classList.remove('active');
+    dots[obCurrent].classList.remove('active');
+    obCurrent++;
+    slides[obCurrent].classList.add('active');
+    dots[obCurrent].classList.add('active');
+  };
+  window.obFinish = function() {
+    hideOnboarding();
+  };
+
+  // ── Seed sample data if DB is empty ──
+  async function seedIfEmpty() {
+    const snap = await getDocs(query(collection(db,'prayers'), orderBy('createdAt','desc')));
+    if (!snap.empty) return; // already has data
+    const batch = [
+      { text: 'Pido oración por la salud de mi madre, que Dios la sane completamente. Confío en su poder.', category: 'Salud', authorName: 'María González', isAnon: false },
+      { text: 'Necesito oración por mi familia, estamos pasando por un momento muy difícil. Dios es fiel.', category: 'Familia', authorName: 'Carlos Mendoza', isAnon: false },
+      { text: 'Oro por provisión económica. Creo que Dios abrirá puertas donde parece que no hay salida.', category: 'Finanzas', authorName: 'Anónimo', isAnon: true },
+      { text: 'Pido sabiduría y dirección de Dios para una decisión importante en mi vida. Que su voluntad sea hecha.', category: 'Espiritual', authorName: 'Ana Rodríguez', isAnon: false },
+      { text: 'Orando por la restauración de mi matrimonio. Creo que con Dios todo es posible.', category: 'Familia', authorName: 'Anónimo', isAnon: true },
+    ];
+    for (const p of batch) {
+      await addDoc(collection(db,'prayers'), {
+        ...p,
+        authorId: 'seed',
+        amenUsers: [],
+        createdAt: serverTimestamp(),
+      });
+    }
+    // Seed testimonies
+    const tbatch = [
+      { title: 'Sanidad milagrosa', text: 'Los médicos dijeron que mi mamá no saldría del hospital, pero oramos juntos y Dios hizo el milagro. Hoy está completamente sana. ¡Nunca dejen de orar!', authorName: 'María González' },
+      { title: 'Trabajo en el momento exacto', text: 'Llevaba 6 meses desempleado. La comunidad oró por mí y exactamente a los 3 días de esa oración recibí una oferta de trabajo mejor que la anterior. Dios es fiel.', authorName: 'Roberto Lima' },
+      { title: 'Restauración familiar', text: 'Mi familia estaba completamente rota. Pedí oración aquí y Dios comenzó a obrar. Hoy estamos unidos y más fuertes que nunca. Este lugar cambió mi vida.', authorName: 'Patricia Soto' },
+      { title: 'Paz en medio de la tormenta', text: 'No pedí que cambiara mi situación, pedí fuerza para atravesarla. Dios me dio una paz que sobrepasa todo entendimiento. Las oraciones de esta comunidad me sostuvieron.', authorName: 'David Herrera' },
+    ];
+    for (const t of tbatch) {
+      await addDoc(collection(db,'testimonies'), {
+        ...t,
+        authorId: 'seed',
+        imageBase64: null,
+        alleluyaUsers: [],
+        commentCount: 0,
+        createdAt: serverTimestamp(),
+      });
+    }
+  }
+
+  // ── Answered Prayer ──
+  let answeredPrayerId = null;
+
+  window.openAnsweredModal = function(prayerId, prayerText) {
+    answeredPrayerId = prayerId;
+    document.getElementById('answered-prayer-text').textContent = prayerText;
+    document.getElementById('answered-title').value = '';
+    document.getElementById('answered-text').value  = '';
+    document.getElementById('answered-img').value   = '';
+    document.getElementById('answered-img-preview').style.display = 'none';
+    document.getElementById('modal-answered').classList.add('open');
+  };
+
+  window.closeAnsweredModal = function() {
+    document.getElementById('modal-answered').classList.remove('open');
+    answeredPrayerId = null;
+  };
+
+  document.getElementById('answered-img').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('answered-img-thumb').src = e.target.result;
+      document.getElementById('answered-img-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  window.postAnswered = async function() {
+    clearErr();
+    const title = document.getElementById('answered-title').value.trim();
+    const text  = document.getElementById('answered-text').value.trim();
+    const file  = document.getElementById('answered-img').files[0];
+    if (!title) { showErr('answered','Escribe un título para tu testimonio.'); return; }
+    if (!text)  { showErr('answered','Cuéntanos cómo Dios respondió.'); return; }
+    setBtn('btn-post-answered', true);
+    let imageBase64 = null;
+    if (file) {
+      imageBase64 = await new Promise(res => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.readAsDataURL(file);
+      });
+    }
+    try {
+      // 1. Publish testimony linked to prayer
+      await addDoc(collection(db,'testimonies'), {
+        title, text, imageBase64,
+        linkedPrayerId: answeredPrayerId,
+        authorId:   currentUser.uid,
+        authorName: currentUser.displayName || currentUser.email,
+        alleluyaUsers: [],
+        commentCount: 0,
+        createdAt: serverTimestamp(),
+      });
+      // 2. Mark prayer as answered
+      await updateDoc(doc(db,'prayers', answeredPrayerId), { answered: true });
+      closeAnsweredModal();
+      // Navigate to testimonies to show it
+      switchAppTab('testimonies');
+    } catch(e) {
+      showErr('answered','Error al publicar. Intenta de nuevo.');
+    }
+    setBtn('btn-post-answered', false);
+  };
+
+  // ── i18n System ──
+  let currentLang = 'es';
+
+  const LANGS = {
+    es: { code:'ES', flag:'🇪🇸' },
+    en: { code:'EN', flag:'🇬🇧' },
+    pt: { code:'PT', flag:'🇧🇷' },
+    fr: { code:'FR', flag:'🇫🇷' },
+    zh: { code:'ZH', flag:'🇨🇳' },
+    ru: { code:'RU', flag:'🇷🇺' },
+  };
+
+  const TRANSLATIONS = {
+    es: {
+      tab_prayers:'🙏 Oraciones', tab_testimonies:'🕊️ Testimonios',
+      banner_prayers:'Cada Amén es una promesa de oración 🙏',
+      banner_testimonies:'Cada testimonio es prueba de que Dios escucha 🕊️',
+      login_tab:'Iniciar sesión', register_tab:'Registrarse',
+      btn_login:'Entrar', btn_register:'Crear cuenta',
+      btn_post_prayer:'Publicar oración', btn_post_testimony:'Publicar testimonio',
+      bottom_verse:'Una comunidad mundial unida en oración 🙏',
+      ob1_title:'Halleluya', ob2_title:'Testimonios de fe', ob3_title:'Comunidad global',
+      ob1_desc:'Una comunidad mundial unida en oración. Comparte tus peticiones y miles de hermanos orarán contigo.',
+      menu_my_prayers:'🙏 Mis oraciones', menu_my_test:'✨ Mis testimonios', menu_ofrenda:'🙌 Ofrenda', menu_signout:'Cerrar sesión',
+    },
+    en: {
+      tab_prayers:'🙏 Prayers', tab_testimonies:'🕊️ Testimonies',
+      banner_prayers:'Every Amen is a promise of prayer 🙏',
+      banner_testimonies:'Every testimony is proof that God listens 🕊️',
+      login_tab:'Sign in', register_tab:'Sign up',
+      btn_login:'Enter', btn_register:'Create account',
+      btn_post_prayer:'Post prayer', btn_post_testimony:'Post testimony',
+      bottom_verse:'A worldwide community united in prayer 🙏',
+      ob1_title:'Halleluya', ob2_title:'Testimonies of faith', ob3_title:'Global community',
+      ob1_desc:'A worldwide community united in prayer. Share your requests and thousands of brothers will pray with you.',
+      menu_my_prayers:'🙏 My prayers', menu_my_test:'✨ My testimonies', menu_ofrenda:'🙌 Offering', menu_signout:'Sign out',
+    },
+    pt: {
+      tab_prayers:'🙏 Orações', tab_testimonies:'🕊️ Testemunhos',
+      banner_prayers:'Cada Amém é uma promessa de oração 🙏',
+      banner_testimonies:'Cada testemunho é prova de que Deus ouve 🕊️',
+      login_tab:'Entrar', register_tab:'Registrar',
+      btn_login:'Entrar', btn_register:'Criar conta',
+      btn_post_prayer:'Publicar oração', btn_post_testimony:'Publicar testemunho',
+      bottom_verse:'Uma comunidade mundial unida em oração 🙏',
+      ob1_title:'Halleluya', ob2_title:'Testemunhos de fé', ob3_title:'Comunidade global',
+      ob1_desc:'Uma comunidade mundial unida em oração. Compartilhe seus pedidos e milhares de irmãos orarão com você.',
+      menu_my_prayers:'🙏 Minhas orações', menu_my_test:'✨ Meus testemunhos', menu_ofrenda:'🙌 Oferta', menu_signout:'Sair',
+    },
+    fr: {
+      tab_prayers:'🙏 Prières', tab_testimonies:'🕊️ Témoignages',
+      banner_prayers:'Chaque Amen est une promesse de prière 🙏',
+      banner_testimonies:'Chaque témoignage prouve que Dieu écoute 🕊️',
+      login_tab:"Se connecter", register_tab:"S'inscrire",
+      btn_login:'Entrer', btn_register:'Créer un compte',
+      btn_post_prayer:'Publier la prière', btn_post_testimony:'Publier le témoignage',
+      bottom_verse:'Une communauté mondiale unie dans la prière 🙏',
+      ob1_title:'Halleluya', ob2_title:'Témoignages de foi', ob3_title:'Communauté mondiale',
+      ob1_desc:'Une communauté mondiale unie dans la prière. Partagez vos demandes et des milliers de frères prieront avec vous.',
+      menu_my_prayers:'🙏 Mes prières', menu_my_test:'✨ Mes témoignages', menu_ofrenda:'🙌 Offrande', menu_signout:'Déconnexion',
+    },
+    zh: {
+      tab_prayers:'🙏 祷告', tab_testimonies:'🕊️ 见证',
+      banner_prayers:'每一个阿们都是祷告的承诺 🙏',
+      banner_testimonies:'每一个见证都证明神在聆听 🕊️',
+      login_tab:'登录', register_tab:'注册',
+      btn_login:'进入', btn_register:'创建账户',
+      btn_post_prayer:'发布祷告', btn_post_testimony:'发布见证',
+      bottom_verse:'全球社区联合祷告 🙏',
+      ob1_title:'哈利路亚', ob2_title:'信仰见证', ob3_title:'全球社区',
+      ob1_desc:'一个全球联合祷告的社区。分享您的请求，数千位弟兄姐妹将与您一同祷告。',
+      menu_my_prayers:'🙏 我的祷告', menu_my_test:'✨ 我的见证', menu_ofrenda:'🙌 奉献', menu_signout:'退出',
+    },
+    ru: {
+      tab_prayers:'🙏 Молитвы', tab_testimonies:'🕊️ Свидетельства',
+      banner_prayers:'Каждое Аминь — обещание молитвы 🙏',
+      banner_testimonies:'Каждое свидетельство — доказательство того, что Бог слышит 🕊️',
+      login_tab:'Войти', register_tab:'Регистрация',
+      btn_login:'Войти', btn_register:'Создать аккаунт',
+      btn_post_prayer:'Опубликовать молитву', btn_post_testimony:'Опубликовать свидетельство',
+      bottom_verse:'Всемирное сообщество, объединённое в молитве 🙏',
+      ob1_title:'Аллилуйя', ob2_title:'Свидетельства веры', ob3_title:'Мировое сообщество',
+      ob1_desc:'Всемирное сообщество, объединённое в молитве. Делитесь своими просьбами, и тысячи братьев помолятся вместе с вами.',
+      menu_my_prayers:'🙏 Мои молитвы', menu_my_test:'✨ Мои свидетельства', menu_ofrenda:'🙌 Пожертвование', menu_signout:'Выйти',
+    },
+  };
+
+  function getLangFlag(lang) {
+    const codes = {es:'es',en:'gb',pt:'br',fr:'fr',zh:'cn',ru:'ru'};
+    return codes[lang] ? '<img src="https://flagcdn.com/16x12/'+codes[lang]+'.png" style="vertical-align:middle;border-radius:2px;" alt="'+lang+'"/>' : '';
+  }
+
+  window.setLang = function(lang) {
+    currentLang = lang;
+    try { localStorage.setItem('halleluya_lang', lang); } catch(e) {}
+    // Update selector button
+    const flagCodes = {es:'es',en:'gb',pt:'br',fr:'fr',zh:'cn',ru:'ru'};
+    const fi = document.getElementById('lang-current-flag');
+    if (fi && flagCodes[lang]) fi.src = 'https://flagcdn.com/24x18/'+flagCodes[lang]+'.png';
+    // Close menu
+    document.getElementById('lang-menu').classList.remove('open');
+    // Update all active lang options
+    document.querySelectorAll('.lang-option').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('onclick').includes("'"+lang+"'"));
+    });
+    // Update all i18n elements
+    const T = TRANSLATIONS[lang] || TRANSLATIONS['es'];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (T[key]) {
+        el.textContent = T[key];
+        // also update data-label for buttons
+        if (el.dataset.label) el.dataset.label = T[key];
+      }
+    });
+    // Update html lang attribute
+    document.getElementById('htmlRoot') && (document.getElementById('htmlRoot').lang = lang);
+    document.documentElement.lang = lang;
+    // Update user menu items
+    const menuItems = {
+      'goToMyPrayers': 'menu_my_prayers',
+      'goToMyTestimonies': 'menu_my_test',
+      'openOfrendaModal': 'menu_ofrenda',
+      'doSignOut': 'menu_signout',
+    };
+  };
+
+  window.toggleLangMenu = function() {
+    const m = document.getElementById('lang-menu');
+    m.classList.toggle('open');
+    // close user menu if open
+    document.getElementById('user-menu').classList.remove('open');
+  };
+
+  // ── Unified outside-click handler ──
+  document.addEventListener('click', e => {
+    // Close user menu
+    const um = document.getElementById('user-menu');
+    const ab = document.getElementById('avatar-btn');
+    if (um && ab && !um.contains(e.target) && !ab.contains(e.target)) um.classList.remove('open');
+    // Close lang menu
+    const lm = document.getElementById('lang-menu');
+    const lb = document.getElementById('lang-btn');
+    if (lm && lb && !lm.contains(e.target) && !lb.contains(e.target)) lm.classList.remove('open');
+    // Close card dropdowns
+    document.querySelectorAll('.card-dropdown.open').forEach(m => m.classList.remove('open'));
+  });
+
+  // Init lang from localStorage
+  try {
+    const saved = localStorage.getItem('halleluya_lang');
+    if (saved && LANGS[saved]) setTimeout(() => setLang(saved), 100);
+  } catch(e) {}
+
+  // ── Bind auth buttons via event listeners (avoids module scope issues) ──
+  document.getElementById('btn-login')?.addEventListener('click', doLogin);
+  document.getElementById('btn-register')?.addEventListener('click', doRegister);
+  document.getElementById('btn-google-login')?.addEventListener('click', doGoogle);
+  document.getElementById('btn-google-register')?.addEventListener('click', doGoogle);
+  document.querySelector('#login-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  document.querySelector('#reg-pass')?.addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
+
+  // ── Utils ──
+  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function formatTime(date) {
+    const diff = Math.floor((Date.now()-date)/1000);
+    if (diff<60)   return 'Ahora mismo';
+    if (diff<3600) return `hace ${Math.floor(diff/60)} min`;
+    if (diff<86400)return `hace ${Math.floor(diff/3600)} h`;
+    return `hace ${Math.floor(diff/86400)} días`;
+  }
+</script>
+
+</body>
+</html>
