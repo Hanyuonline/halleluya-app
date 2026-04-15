@@ -542,10 +542,8 @@
 
   <div class="auth-card">
     <div class="logo-area">
-      <div class="logo-icon">
-        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-          <text x="18" y="27" text-anchor="middle" font-family="Cinzel,serif" font-size="22" font-weight="500" fill="white">H</text>
-        </svg>
+      <div class="logo-icon" style="background:transparent;padding:0;overflow:hidden;">
+        <img src="/icon-512.png" style="width:64px;height:64px;border-radius:18px;display:block;"/>
       </div>
       <div class="logo-name">Halleluya</div>
       <div class="logo-verse">"Si dos se ponen de acuerdo en la tierra,<br>mi Padre lo hará en el cielo" — Mat 18:19</div>
@@ -599,6 +597,14 @@
       </button>
       <div class="footer-link">Al registrarte aceptas nuestros <a href="#">Términos de uso</a></div>
     </div>
+  </div>
+  <div style="position:relative;z-index:2;display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+    <button onclick="setLang('es')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/es.png" style="width:24px;height:18px;border-radius:2px;"/></button>
+    <button onclick="setLang('en')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/gb.png" style="width:24px;height:18px;border-radius:2px;"/></button>
+    <button onclick="setLang('pt')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/br.png" style="width:24px;height:18px;border-radius:2px;"/></button>
+    <button onclick="setLang('fr')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/fr.png" style="width:24px;height:18px;border-radius:2px;"/></button>
+    <button onclick="setLang('zh')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/cn.png" style="width:24px;height:18px;border-radius:2px;"/></button>
+    <button onclick="setLang('ru')" style="background:none;border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;"><img src="https://flagcdn.com/24x18/ru.png" style="width:24px;height:18px;border-radius:2px;"/></button>
   </div>
   <div class="bottom-verse" data-i18n="bottom_verse">Una comunidad mundial unida en oración 🙏</div>
 </div>
