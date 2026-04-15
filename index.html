@@ -3,7 +3,32 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Halleluya — Comunidad de Oración</title>
+  <title>Halleluya — Comunidad de Oración Mundial</title>
+  <meta name="description" content="Únete a miles de hermanos en oración. Comparte tus peticiones, da Amén y comparte tus testimonios de fe. Basado en Mateo 18:19."/>
+
+  <!-- Open Graph (WhatsApp, Facebook, Telegram) -->
+  <meta property="og:title" content="Halleluya — Comunidad de Oración Mundial"/>
+  <meta property="og:description" content="🙏 Únete a miles de hermanos orando juntos. Comparte tu petición y recibe el apoyo de una comunidad global de fe. Mateo 18:19"/>
+  <meta property="og:url" content="https://halleluya.live"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://halleluya.live/og-image.png"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:site_name" content="Halleluya"/>
+  <meta property="og:locale" content="es_ES"/>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Halleluya — Comunidad de Oración Mundial"/>
+  <meta name="twitter:description" content="🙏 Únete a miles de hermanos orando juntos. Mateo 18:19"/>
+  <meta name="twitter:image" content="https://halleluya.live/og-image.png"/>
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#1A8FD1"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Halleluya"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -1905,10 +1930,27 @@
     document.querySelectorAll('.card-dropdown.open').forEach(m => m.classList.remove('open'));
   });
 
-  // Init lang from localStorage
+  // Init lang — 1) localStorage, 2) browser language, 3) default Spanish
   try {
     const saved = localStorage.getItem('halleluya_lang');
-    if (saved && LANGS[saved]) setTimeout(() => setLang(saved), 100);
+    if (saved && LANGS[saved]) {
+      setTimeout(() => setLang(saved), 100);
+    } else {
+      // Detect browser language
+      const browserLang = (navigator.language || navigator.userLanguage || 'es').toLowerCase().slice(0,2);
+      const langMap = {
+        es:'es', en:'en', pt:'pt', fr:'fr',
+        zh:'zh', ru:'ru',
+        // Map related languages to supported ones
+        ca:'es', gl:'es', eu:'es',   // regional Spanish
+        br:'pt',                      // Breton -> Portuguese fallback
+        cn:'zh', tw:'zh', hk:'zh',   // Chinese variants
+        be:'ru', uk:'ru', bg:'ru',   // Slavic -> Russian
+        af:'fr', mg:'fr', sn:'fr',   // African -> French
+      };
+      const detected = langMap[browserLang] || 'es';
+      setTimeout(() => setLang(detected), 100);
+    }
   } catch(e) {}
 
   // ── Bind auth buttons via event listeners (avoids module scope issues) ──
