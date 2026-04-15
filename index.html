@@ -558,16 +558,16 @@
     <div class="panel active" id="panel-login">
       <div class="error-box" id="err-login"></div>
       <div class="form-group">
-        <label class="form-label">Correo</label>
+        <label class="form-label" data-i18n="lbl_email">Correo</label>
         <input class="form-input" id="login-email" type="email" placeholder="tu@correo.com"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Contraseña</label>
+        <label class="form-label" data-i18n="lbl_pass">Contraseña</label>
         <input class="form-input" id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
-      <div class="forgot"><a href="#">¿Olvidaste tu contraseña?</a></div>
+      <div class="forgot"><a href="#" data-i18n="lbl_forgot">¿Olvidaste tu contraseña?</a></div>
       <button class="btn-primary" id="btn-login" data-label="Entrar" data-i18n="btn_login">Entrar</button>
-      <div class="divider"><div class="divider-line"></div><div class="divider-text">o continúa con</div><div class="divider-line"></div></div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text" data-i18n="lbl_or">o continúa con</div><div class="divider-line"></div></div>
       <button class="btn-google" id="btn-google-login">
         <svg class="google-svg" width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
         Continuar con Google
@@ -578,19 +578,19 @@
     <div class="panel" id="panel-register">
       <div class="error-box" id="err-register"></div>
       <div class="form-group">
-        <label class="form-label">Nombre</label>
+        <label class="form-label" data-i18n="lbl_name">Nombre</label>
         <input class="form-input" id="reg-name" type="text" placeholder="Tu nombre"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Correo</label>
+        <label class="form-label" data-i18n="lbl_email">Correo</label>
         <input class="form-input" id="reg-email" type="email" placeholder="tu@correo.com"/>
       </div>
       <div class="form-group">
-        <label class="form-label">Contraseña</label>
+        <label class="form-label" data-i18n="lbl_pass">Contraseña</label>
         <input class="form-input" id="reg-pass" type="password" placeholder="Mínimo 8 caracteres" onkeydown="if(event.key==='Enter')doRegister()"/>
       </div>
       <button class="btn-primary" id="btn-register" data-label="Crear cuenta" data-i18n="btn_register">Crear cuenta</button>
-      <div class="divider"><div class="divider-line"></div><div class="divider-text">o continúa con</div><div class="divider-line"></div></div>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text" data-i18n="lbl_or">o continúa con</div><div class="divider-line"></div></div>
       <button class="btn-google" id="btn-google-register">
         <svg class="google-svg" width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
         Registrarse con Google
@@ -1805,7 +1805,12 @@
   const TRANSLATIONS = {
     es: {
       verse: '"Les aseguro que si dos de ustedes se ponen de acuerdo para pedirle algo a Dios, él se lo dará." — Mateo 18:19 (TLA)',
-      tab_prayers:'🙏 Oraciones', tab_testimonies:'🕊️ Testimonios',
+      tab_prayers:'🙏 Oraciones',
+      lbl_email:'Correo',
+      lbl_pass:'Contraseña',
+      lbl_name:'Nombre',
+      lbl_forgot:'¿Olvidaste tu contraseña?',
+      lbl_or:'o continúa con', tab_testimonies:'🕊️ Testimonios',
       banner_prayers:'Cada Amén es una promesa de oración 🙏',
       banner_testimonies:'Cada testimonio es prueba de que Dios escucha 🕊️',
       login_tab:'Iniciar sesión', register_tab:'Registrarse',
@@ -1818,7 +1823,12 @@
     },
     en: {
       verse: '"If two of you agree here on earth concerning anything you ask, my Father in heaven will do it for you." — Matthew 18:19 (NLT)',
-      tab_prayers:'🙏 Prayers', tab_testimonies:'🕊️ Testimonies',
+      tab_prayers:'🙏 Prayers',
+      lbl_email:'Email',
+      lbl_pass:'Password',
+      lbl_name:'Name',
+      lbl_forgot:'Forgot your password?',
+      lbl_or:'or continue with', tab_testimonies:'🕊️ Testimonies',
       banner_prayers:'Every Amen is a promise of prayer 🙏',
       banner_testimonies:'Every testimony is proof that God listens 🕊️',
       login_tab:'Sign in', register_tab:'Sign up',
@@ -1831,7 +1841,12 @@
     },
     pt: {
       verse: '"Se dois de vocês aqui na terra concordarem em pedir alguma coisa, ela será dada pelo meu Pai, que está no céu." — Mateus 18:19 (NTLH)',
-      tab_prayers:'🙏 Orações', tab_testimonies:'🕊️ Testemunhos',
+      tab_prayers:'🙏 Orações',
+      lbl_email:'E-mail',
+      lbl_pass:'Senha',
+      lbl_name:'Nome',
+      lbl_forgot:'Esqueceu sua senha?',
+      lbl_or:'ou continue com', tab_testimonies:'🕊️ Testemunhos',
       banner_prayers:'Cada Amém é uma promessa de oração 🙏',
       banner_testimonies:'Cada testemunho é prova de que Deus ouve 🕊️',
       login_tab:'Entrar', register_tab:'Registrar',
@@ -1844,7 +1859,12 @@
     },
     fr: {
       verse: "\"Si deux d'entre vous se mettent d'accord pour demander quoi que ce soit, mon Père céleste le leur accordera.\" — Matthieu 18:19 (BDS)",
-      tab_prayers:'🙏 Prières', tab_testimonies:'🕊️ Témoignages',
+      tab_prayers:'🙏 Prières',
+      lbl_email:'E-mail',
+      lbl_pass:'Mot de passe',
+      lbl_name:'Prénom',
+      lbl_forgot:'Mot de passe oublié?',
+      lbl_or:'ou continuer avec', tab_testimonies:'🕊️ Témoignages',
       banner_prayers:'Chaque Amen est une promesse de prière 🙏',
       banner_testimonies:'Chaque témoignage prouve que Dieu écoute 🕊️',
       login_tab:"Se connecter", register_tab:"S'inscrire",
@@ -1857,7 +1877,12 @@
     },
     zh: {
       verse: '"如果你们中有两个人在地上同心祈求什么，我在天上的父必为你们成全。" — 马太福音 18:19 (CCB)',
-      tab_prayers:'🙏 祷告', tab_testimonies:'🕊️ 见证',
+      tab_prayers:'🙏 祷告',
+      lbl_email:'邮箱',
+      lbl_pass:'密码',
+      lbl_name:'姓名',
+      lbl_forgot:'忘记密码?',
+      lbl_or:'或继续使用', tab_testimonies:'🕊️ 见证',
       banner_prayers:'每一个阿们都是祷告的承诺 🙏',
       banner_testimonies:'每一个见证都证明神在聆听 🕊️',
       login_tab:'登录', register_tab:'注册',
@@ -1870,7 +1895,12 @@
     },
     ru: {
       verse: '"Если двое из вас на земле согласятся просить о чём-либо, Отец Небесный даст им это." — Матфея 18:19 (СП)',
-      tab_prayers:'🙏 Молитвы', tab_testimonies:'🕊️ Свидетельства',
+      tab_prayers:'🙏 Молитвы',
+      lbl_email:'Эл. почта',
+      lbl_pass:'Пароль',
+      lbl_name:'Имя',
+      lbl_forgot:'Забыли пароль?',
+      lbl_or:'или войти через', tab_testimonies:'🕊️ Свидетельства',
       banner_prayers:'Каждое Аминь — обещание молитвы 🙏',
       banner_testimonies:'Каждое свидетельство — доказательство того, что Бог слышит 🕊️',
       login_tab:'Войти', register_tab:'Регистрация',
