@@ -213,6 +213,14 @@
     }
     .btn-share:hover { border-color:var(--sky);color:var(--sky);background:var(--cloud); }
     .btn-share svg { flex-shrink:0; }
+    .btn-load-more {
+      display:block;width:calc(100% - 32px);margin:0 16px 16px;
+      padding:12px;background:var(--white);border:1.5px solid var(--mist);
+      border-radius:12px;font-family:'Lato',sans-serif;font-size:14px;
+      color:var(--sky);font-weight:700;cursor:pointer;
+      transition:background .2s,border-color .2s;text-align:center;
+    }
+    .btn-load-more:hover { background:var(--cloud);border-color:var(--sky); }
     .share-toast {
       position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
       background:#0a2a3d;color:#fff;padding:10px 20px;border-radius:20px;
@@ -840,13 +848,14 @@
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
     signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, getDocs, onSnapshot, getDoc, deleteDoc,
-    doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy
+    doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, query, orderBy, limit, startAfter
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app  = initializeApp({
@@ -859,6 +868,7 @@
   });
   const auth     = getAuth(app);
   const db       = getFirestore(app);
+  const storage  = getStorage(app);
   const provider = new GoogleAuthProvider();
   let   currentUser = null;
   let   unsubPrayers = null;
@@ -964,19 +974,48 @@
     return card;
   }
 
-  // ── Load ALL prayers (community feed) ──
+  // ── Load ALL prayers (community feed) — paginated ──
+  const PAGE_SIZE = 20;
+  let lastPrayerDoc = null;
+  let allPrayersLoaded = false;
+
   function loadPrayers() {
     const feed = document.getElementById('prayers-feed');
     feed.innerHTML = '<div class="loading">Cargando oraciones... 🙏</div>';
-    const q = query(collection(db, 'prayers'), orderBy('createdAt', 'desc'));
+    lastPrayerDoc = null;
+    allPrayersLoaded = false;
+    const q = query(collection(db,'prayers'), orderBy('createdAt','desc'), limit(PAGE_SIZE));
     unsubPrayers = onSnapshot(q, snap => {
+      feed.innerHTML = '';
       if (snap.empty) {
         feed.innerHTML = `<div class="empty"><div class="empty-icon">🙏</div><div class="empty-text">Aún no hay oraciones.<br>¡Sé el primero en compartir la tuya!</div></div>`;
         return;
       }
-      feed.innerHTML = '';
       snap.forEach(docSnap => feed.appendChild(renderCard(docSnap, false)));
+      lastPrayerDoc = snap.docs[snap.docs.length - 1];
+      if (snap.docs.length < PAGE_SIZE) {
+        allPrayersLoaded = true;
+      } else {
+        addLoadMoreBtn(feed, 'prayers');
+      }
     });
+  }
+
+  async function loadMorePrayers() {
+    if (!lastPrayerDoc || allPrayersLoaded) return;
+    const feed = document.getElementById('prayers-feed');
+    const btn  = document.getElementById('btn-load-more-prayers');
+    if (btn) { btn.textContent = 'Cargando...'; btn.disabled = true; }
+    const q = query(collection(db,'prayers'), orderBy('createdAt','desc'), startAfter(lastPrayerDoc), limit(PAGE_SIZE));
+    const snap = await getDocs(q);
+    if (btn) btn.remove();
+    snap.forEach(docSnap => feed.appendChild(renderCard(docSnap, false)));
+    lastPrayerDoc = snap.docs[snap.docs.length - 1];
+    if (snap.docs.length < PAGE_SIZE) {
+      allPrayersLoaded = true;
+    } else {
+      addLoadMoreBtn(feed, 'prayers');
+    }
   }
 
   // ── Load MY prayers ──
@@ -1137,18 +1176,58 @@
   // consolidated into unified click handler below
 
   // ── Testimony functions ──
+  let lastTestimonyDoc = null;
+  let allTestimoniesLoaded = false;
+
   function loadTestimonies() {
     const feed = document.getElementById('testimonies-feed');
-    feed.innerHTML = '<div class="loading">Cargando testimonios... ✨</div>';
-    const q = query(collection(db,'testimonies'), orderBy('createdAt','desc'));
+    feed.innerHTML = '<div class="loading">Cargando testimonios... 🕊️</div>';
+    lastTestimonyDoc = null;
+    allTestimoniesLoaded = false;
+    const q = query(collection(db,'testimonies'), orderBy('createdAt','desc'), limit(PAGE_SIZE));
     onSnapshot(q, snap => {
+      feed.innerHTML = '';
       if (snap.empty) {
-        feed.innerHTML = `<div class="empty"><div class="empty-icon">✨</div><div class="empty-text">Aún no hay testimonios.<br>¡Sé el primero en compartir lo que Dios hizo!</div></div>`;
+        feed.innerHTML = `<div class="empty"><div class="empty-icon">🕊️</div><div class="empty-text">Aún no hay testimonios.<br>¡Sé el primero en compartir lo que Dios hizo!</div></div>`;
         return;
       }
-      feed.innerHTML = '';
       snap.forEach(docSnap => feed.appendChild(buildTestimonyCard(docSnap)));
+      lastTestimonyDoc = snap.docs[snap.docs.length - 1];
+      if (snap.docs.length < PAGE_SIZE) {
+        allTestimoniesLoaded = true;
+      } else {
+        addLoadMoreBtn(feed, 'testimonies');
+      }
     });
+  }
+
+  async function loadMoreTestimonies() {
+    if (!lastTestimonyDoc || allTestimoniesLoaded) return;
+    const feed = document.getElementById('testimonies-feed');
+    const btn  = document.getElementById('btn-load-more-testimonies');
+    if (btn) { btn.textContent = 'Cargando...'; btn.disabled = true; }
+    const q = query(collection(db,'testimonies'), orderBy('createdAt','desc'), startAfter(lastTestimonyDoc), limit(PAGE_SIZE));
+    const snap = await getDocs(q);
+    if (btn) btn.remove();
+    snap.forEach(docSnap => feed.appendChild(buildTestimonyCard(docSnap)));
+    lastTestimonyDoc = snap.docs[snap.docs.length - 1];
+    if (snap.docs.length < PAGE_SIZE) {
+      allTestimoniesLoaded = true;
+    } else {
+      addLoadMoreBtn(feed, 'testimonies');
+    }
+  }
+
+  function addLoadMoreBtn(feed, type) {
+    const existing = document.getElementById('btn-load-more-' + type);
+    if (existing) existing.remove();
+    const btn = document.createElement('button');
+    btn.className = 'btn-load-more';
+    btn.id = 'btn-load-more-' + type;
+    btn.textContent = 'Ver más oraciones 🙏';
+    if (type === 'testimonies') btn.textContent = 'Ver más testimonios 🕊️';
+    btn.onclick = type === 'prayers' ? loadMorePrayers : loadMoreTestimonies;
+    feed.appendChild(btn);
   }
 
   window.toggleAleluya = async function(id) {
@@ -1203,6 +1282,15 @@
     }
   };
   window.handleTestimonyOverlay = e => { if(e.target===document.getElementById('modal-testimony')) closeTestimonyModal(); };
+
+  // ── Upload image to Firebase Storage ──
+  async function uploadImage(file, folder) {
+    const ext  = file.name.split('.').pop();
+    const name = folder + '/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
+    const storageRef = ref(storage, name);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  }
 
   // Image preview
   document.getElementById('test-img').addEventListener('change', function() {
@@ -1301,7 +1389,7 @@
     card.className = 'tcard';
     card.id = 'tcard-' + id;
     card.innerHTML = `
-      ${d.imageBase64 ? `<img class="tcard-img" src="${d.imageBase64}" alt="Testimonio"/>` : ''}
+      ${d.imageUrl ? `<img class="tcard-img" src="${d.imageUrl}" alt="Testimonio"/>` : ''}
       <div class="tcard-body">
         <div class="tcard-top">
           <div class="pcard-avatar">${initials}</div>
@@ -1597,7 +1685,7 @@
       await addDoc(collection(db,'testimonies'), {
         ...t,
         authorId: 'seed',
-        imageBase64: null,
+        imageUrl: null,
         alleluyaUsers: [],
         commentCount: 0,
         createdAt: serverTimestamp(),
@@ -1642,18 +1730,15 @@
     if (!title) { showErr('answered','Escribe un título para tu testimonio.'); return; }
     if (!text)  { showErr('answered','Cuéntanos cómo Dios respondió.'); return; }
     setBtn('btn-post-answered', true);
-    let imageBase64 = null;
+    let imageUrl = null;
     if (file) {
-      imageBase64 = await new Promise(res => {
-        const r = new FileReader();
-        r.onload = e => res(e.target.result);
-        r.readAsDataURL(file);
-      });
+      try { imageUrl = await uploadImage(file, 'testimonies'); }
+      catch(e) { showErr('answered','Error al subir la imagen. Intenta de nuevo.'); setBtn('btn-post-answered',false); return; }
     }
     try {
       // 1. Publish testimony linked to prayer
       await addDoc(collection(db,'testimonies'), {
-        title, text, imageBase64,
+        title, text, imageUrl,
         linkedPrayerId: answeredPrayerId,
         authorId:   currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
