@@ -26,7 +26,7 @@
   <meta name="twitter:image" content="https://halleluya.live/og-image.png"/>
 
   <!-- PWA -->
-  <meta name="theme-color" content="#1A8FD1"/>
+  <meta name="theme-color" content="#4CAF88"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
@@ -36,14 +36,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --sky:      #1A8FD1;
-      --sky-deep: #0E6EA8;
+      --sky:      #4CAF88;
+      --sky-deep: #388E6A;
       --white:    #ffffff;
-      --cloud:    #F0F8FF;
-      --mist:     #D0E8F5;
-      --text:     #0a2a3d;
-      --text-soft:#4a7a9b;
-      --bg:       #EBF5FB;
+      --cloud:    #F0FAF5;
+      --mist:     #C8EAD8;
+      --text:     #0a2d1e;
+      --text-soft:#4a7a62;
+      --bg:       #EBF7F2;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'Lato', sans-serif; background: var(--bg); color: var(--text); }
@@ -516,7 +516,67 @@
     .btn-ofrenda-cancel { background:none;border:none;font-size:13px;color:var(--text-soft);cursor:pointer;font-family:'Lato',sans-serif;padding:4px; }
     .btn-ofrenda-cancel:hover { color:var(--text); }
 
-    /* ── Edit modal ── */
+    /* ── Notification Bell ── */
+    .notif-bell {
+      position: relative;
+      background: rgba(255,255,255,.15);
+      border: none;
+      border-radius: 50%;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer;
+      transition: background .2s;
+    }
+    .notif-bell:hover { background: rgba(255,255,255,.25); }
+    .notif-badge {
+      position: absolute;
+      top: -3px; right: -3px;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      font-family: 'Lato', sans-serif;
+      border-radius: 10px;
+      padding: 1px 5px;
+      min-width: 16px;
+      text-align: center;
+      line-height: 14px;
+    }
+    .notif-panel {
+      display: none;
+      position: absolute;
+      top: 54px; right: 56px;
+      background: var(--white);
+      border-radius: 14px;
+      border: 1px solid var(--mist);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      width: 300px;
+      z-index: 999;
+      animation: slideUp .2s ease both;
+      overflow: hidden;
+    }
+    .notif-panel.open { display: block; }
+    .notif-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px;
+      font-size: 13px; font-weight: 700; color: var(--text);
+      border-bottom: 1px solid var(--mist);
+    }
+    .notif-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--cloud);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .notif-item:hover { background: var(--cloud); }
+    .notif-item.unread { background: #f0faf5; }
+    .notif-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .notif-body { flex: 1; }
+    .notif-msg { font-size: 12px; color: var(--text); line-height: 1.5; }
+    .notif-time { font-size: 10px; color: var(--text-soft); margin-top: 2px; }
+
+    /* ── Notification Bell ── */
     .edit-modal-overlay {
       display:none;position:fixed;inset:0;
       background:rgba(10,42,61,.5);z-index:400;
@@ -565,7 +625,7 @@
         <label class="form-label" data-i18n="lbl_pass">Contraseña</label>
         <input class="form-input" id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
-      <div class="forgot"><a href="#" data-i18n="lbl_forgot">¿Olvidaste tu contraseña?</a></div>
+      <div class="forgot"><a href="#" id="link-forgot" data-i18n="lbl_forgot">¿Olvidaste tu contraseña?</a></div>
       <button class="btn-primary" id="btn-login" data-label="Entrar" data-i18n="btn_login">Entrar</button>
       <div class="divider"><div class="divider-line"></div><div class="divider-text" data-i18n="lbl_or">o continúa con</div><div class="divider-line"></div></div>
       <button class="btn-google" id="btn-google-login">
@@ -626,23 +686,23 @@
     <div class="ob-icon">🙏</div>
     <div class="ob-title" data-i18n="ob1_title">Halleluya</div>
     <div class="ob-desc" data-i18n="ob1_desc">Una comunidad mundial unida en oración. Comparte tus peticiones y miles de hermanos orarán contigo.</div>
-    <button class="ob-btn" onclick="obNext()">Siguiente</button>
-    <button class="ob-skip" onclick="obFinish()">Saltar</button>
+    <button class="ob-btn" data-i18n="ob_next" onclick="obNext()">Siguiente</button>
+    <button class="ob-skip" data-i18n="ob_skip" onclick="obFinish()">Saltar</button>
   </div>
 
   <div class="ob-slide" id="ob-1">
     <div class="ob-icon">✨</div>
     <div class="ob-title" data-i18n="ob2_title">Testimonios de fe</div>
-    <div class="ob-desc">Cuando Dios responda tu oración, comparte tu testimonio. Tu historia puede fortalecer la fe de otros.</div>
-    <button class="ob-btn" onclick="obNext()">Siguiente</button>
-    <button class="ob-skip" onclick="obFinish()">Saltar</button>
+    <div class="ob-desc" data-i18n="ob2_desc">Cuando Dios responda tu oración, comparte tu testimonio. Tu historia puede fortalecer la fe de otros.</div>
+    <button class="ob-btn" data-i18n="ob_next" onclick="obNext()">Siguiente</button>
+    <button class="ob-skip" data-i18n="ob_skip" onclick="obFinish()">Saltar</button>
   </div>
 
   <div class="ob-slide" id="ob-2">
     <div class="ob-icon">🌍</div>
     <div class="ob-title" data-i18n="ob3_title">Comunidad global</div>
-    <div class="ob-desc">"Si dos se ponen de acuerdo en la tierra, mi Padre lo hará en el cielo." — Mateo 18:19</div>
-    <button class="ob-btn" onclick="obFinish()">¡Comenzar!</button>
+    <div class="ob-desc" data-i18n="ob3_desc">"Si dos se ponen de acuerdo en la tierra, mi Padre lo hará en el cielo." — Mateo 18:19</div>
+    <button class="ob-btn" data-i18n="ob_start" onclick="obFinish()">¡Comenzar!</button>
   </div>
 </div>
 
@@ -655,6 +715,10 @@
   <div class="topbar">
     <div class="topbar-title">Halleluya</div>
     <div class="topbar-right" style="display:flex;align-items:center;gap:8px;">
+      <button class="notif-bell" id="notif-btn" onclick="toggleNotifPanel()" title="Notificaciones">
+        🔔
+        <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+      </button>
       <button class="lang-selector" id="lang-btn" onclick="toggleLangMenu()"><img id="lang-current-flag" src="https://flagcdn.com/24x18/es.png" style="width:22px;height:16px;border-radius:2px;display:block;"/></button>
       <button class="avatar-btn" id="avatar-btn" onclick="toggleUserMenu()">?</button>
     </div>
@@ -668,17 +732,26 @@
     <button class="lang-option" onclick="setLang('ru')" title="Русский"><img src="https://flagcdn.com/24x18/ru.png" alt="RU"/></button>
   </div>
 
+  <!-- Notification Panel -->
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-panel-header">
+      <span>🔔 Notificaciones</span>
+      <button onclick="markAllNotifsRead()" style="background:none;border:none;font-size:11px;color:var(--sky);cursor:pointer;font-family:'Lato',sans-serif;">Marcar todas leídas</button>
+    </div>
+    <div id="notif-list"><div style="text-align:center;padding:20px;font-size:13px;color:var(--text-soft);">Sin notificaciones nuevas</div></div>
+  </div>
+
   <!-- User menu dropdown -->
   <div class="user-menu" id="user-menu">
     <div class="user-menu-name" id="user-menu-name">Usuario</div>
     <div class="user-menu-email" id="user-menu-email"></div>
-    <div class="user-menu-section">Mi contenido</div>
-    <button class="user-menu-item" onclick="goToMyPrayers()">🙏 Mis oraciones</button>
-    <button class="user-menu-item" onclick="goToMyTestimonies()">✨ Mis testimonios</button>
-    <div class="user-menu-section">Comunidad</div>
-    <button class="user-menu-item" onclick="openOfrendaModal();toggleUserMenu(true);">🙌 Ofrenda</button>
+    <div class="user-menu-section" data-i18n="menu_section_content">Mi contenido</div>
+    <button class="user-menu-item" data-i18n="menu_my_prayers" onclick="goToMyPrayers()">🙏 Mis oraciones</button>
+    <button class="user-menu-item" data-i18n="menu_my_test" onclick="goToMyTestimonies()">✨ Mis testimonios</button>
+    <div class="user-menu-section" data-i18n="menu_section_community">Comunidad</div>
+    <button class="user-menu-item" data-i18n="menu_ofrenda" onclick="openOfrendaModal();toggleUserMenu(true);">🙌 Ofrenda</button>
     <div class="user-menu-divider"></div>
-    <button class="user-menu-item danger" onclick="doSignOut()">Cerrar sesión</button>
+    <button class="user-menu-item danger" data-i18n="menu_signout" onclick="doSignOut()">Cerrar sesión</button>
   </div>
 
   <!-- Tabs -->
@@ -700,7 +773,7 @@
         <strong>🙌 ¿Esta app ha sido de bendición para ti?</strong>
         Puedes dejar una ofrenda voluntaria para apoyar este ministerio.
       </div>
-      <button class="btn-ofrenda" onclick="openOfrendaModal()">Ofrendar</button>
+      <button class="btn-ofrenda" data-i18n="menu_ofrenda_btn" onclick="openOfrendaModal()">Ofrendar</button>
     </div>
   </div>
 
@@ -727,7 +800,7 @@
         <strong>🙌 ¿Esta app ha sido de bendición para ti?</strong>
         Puedes dejar una ofrenda voluntaria para apoyar este ministerio.
       </div>
-      <button class="btn-ofrenda" onclick="openOfrendaModal()">Ofrendar</button>
+      <button class="btn-ofrenda" data-i18n="menu_ofrenda_btn" onclick="openOfrendaModal()">Ofrendar</button>
     </div>
   </div>
 
@@ -858,8 +931,8 @@
     <div class="ofrenda-icon">🙏</div>
     <div class="ofrenda-title">Apoya este ministerio</div>
     <div class="ofrenda-msg">Tu ofrenda mantiene viva esta misión de fe.<br>Gracias por ser parte de esta comunidad.</div>
-    <button class="btn-ofrenda-confirm" onclick="goToOfrenda()">🙌 Quiero ofrendar</button>
-    <button class="btn-ofrenda-cancel" onclick="closeOfrendaModal()">Ahora no</button>
+    <button class="btn-ofrenda-confirm" data-i18n="ofrenda_confirm" onclick="goToOfrenda()">🙌 Quiero ofrendar</button>
+    <button class="btn-ofrenda-cancel" data-i18n="ofrenda_cancel" onclick="closeOfrendaModal()">Ahora no</button>
   </div>
 </div>
 
@@ -878,13 +951,31 @@
 
 <div class="share-toast" id="share-toast">🔗 Link copiado</div>
 
+<!-- Forgot Password Modal -->
+<div class="ofrenda-modal-overlay" id="forgot-overlay" onclick="if(event.target===this)closeForgotModal()" style="z-index:600;">
+  <div class="ofrenda-modal">
+    <div class="ofrenda-icon">🔑</div>
+    <div class="ofrenda-title" style="font-size:16px;">Recuperar contraseña</div>
+    <div class="ofrenda-msg">Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</div>
+    <div class="error-box" id="err-forgot"></div>
+    <div id="forgot-success" style="display:none;background:#f0faf5;color:#2e7d32;border:1px solid #a5d6a7;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;text-align:center;">✅ Correo enviado. Revisa tu bandeja de entrada.</div>
+    <div class="form-group" style="text-align:left;margin-bottom:16px;">
+      <label class="form-label">Correo electrónico</label>
+      <input class="form-input" id="forgot-email" type="email" placeholder="tu@correo.com" onkeydown="if(event.key==='Enter')sendForgotEmail()"/>
+    </div>
+    <button class="btn-primary" id="btn-forgot-send" data-label="Enviar enlace" onclick="sendForgotEmail()">Enviar enlace</button>
+    <button class="btn-ofrenda-cancel" style="margin-top:10px;" onclick="closeForgotModal()">Cancelar</button>
+  </div>
+</div>
+
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile
+    signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, updateProfile,
+    sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, getDocs, onSnapshot, getDoc, deleteDoc,
@@ -934,6 +1025,7 @@
       document.getElementById('user-menu-email').textContent = user.email;
       loadPrayers();
       seedIfEmpty();
+      startNotifications(user.uid);
       // Show onboarding only first time
       try {
         if (!localStorage.getItem('halleluya_ob_done')) showOnboarding();
@@ -1135,7 +1227,21 @@
     const email = document.getElementById('reg-email').value.trim();
     const pass  = document.getElementById('reg-pass').value;
     if (!name||!email||!pass) { showErr('register','Completa todos los campos.'); return; }
-    if (pass.length<8) { showErr('register','Mínimo 8 caracteres.'); return; }
+    if (pass.length<8) {
+      showErr('register','La contraseña debe tener al menos 8 caracteres.');
+      const passInput = document.getElementById('reg-pass');
+      passInput.style.borderColor = '#e74c3c';
+      passInput.style.background = '#fff5f5';
+      passInput.focus();
+      passInput.addEventListener('input', function onType() {
+        if (passInput.value.length >= 8) {
+          passInput.style.borderColor = '';
+          passInput.style.background = '';
+          passInput.removeEventListener('input', onType);
+        }
+      });
+      return;
+    }
     setBtn('btn-register',true);
     try {
       const cred = await createUserWithEmailAndPassword(auth,email,pass);
@@ -1153,6 +1259,39 @@
     await signOut(auth);
     toggleUserMenu(true);
   };
+
+  // ── Forgot Password ──
+  window.openForgotModal = function() {
+    document.getElementById('forgot-overlay').classList.add('open');
+    document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+    document.getElementById('err-forgot').style.display = 'none';
+    document.getElementById('forgot-success').style.display = 'none';
+  };
+  window.closeForgotModal = function() {
+    document.getElementById('forgot-overlay').classList.remove('open');
+  };
+  window.sendForgotEmail = async function() {
+    const email = document.getElementById('forgot-email').value.trim();
+    const errEl = document.getElementById('err-forgot');
+    const sucEl = document.getElementById('forgot-success');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+    if (!email) { errEl.textContent = 'Ingresa tu correo.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('btn-forgot-send');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    try {
+      await sendPasswordResetEmail(auth, email);
+      sucEl.style.display = 'block';
+      setTimeout(() => closeForgotModal(), 3000);
+    } catch(e) {
+      errEl.textContent = ERR[e.code] || 'Error al enviar. Verifica tu correo.';
+      errEl.style.display = 'block';
+    }
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
+  };
+
+  // Wire up forgot link
+  document.getElementById('link-forgot')?.addEventListener('click', e => { e.preventDefault(); openForgotModal(); });
 
   // ── Modal ──
   window.openModal  = () => document.getElementById('modal').classList.add('open');
@@ -1666,7 +1805,143 @@
     } catch(e) { alert('Error al eliminar.'); }
   };
 
-  // ── Onboarding ──
+  // ── In-App Notifications ──
+  let notifUnsubscribe = null;
+
+  function startNotifications(userId) {
+    if (notifUnsubscribe) notifUnsubscribe();
+    // Listen to user's own notifications collection
+    const q = query(
+      collection(db, 'users', userId, 'notifications'),
+      orderBy('createdAt', 'desc'),
+      limit(30)
+    );
+    notifUnsubscribe = onSnapshot(q, snap => {
+      const notifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const unread = notifs.filter(n => !n.read).length;
+      const badge = document.getElementById('notif-badge');
+      if (unread > 0) {
+        badge.textContent = unread > 9 ? '9+' : unread;
+        badge.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
+      }
+      renderNotifList(notifs);
+    });
+  }
+
+  function renderNotifList(notifs) {
+    const list = document.getElementById('notif-list');
+    if (!notifs.length) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;font-size:13px;color:var(--text-soft);">Sin notificaciones nuevas</div>';
+      return;
+    }
+    list.innerHTML = '';
+    notifs.forEach(n => {
+      const div = document.createElement('div');
+      div.className = 'notif-item' + (n.read ? '' : ' unread');
+      const icon = n.type === 'amen' ? '🙏' : n.type === 'comment' ? '💬' : '✨';
+      div.innerHTML = `<div class="notif-icon">${icon}</div>
+        <div class="notif-body">
+          <div class="notif-msg">${n.message || ''}</div>
+          <div class="notif-time">${n.createdAt ? formatTime(n.createdAt.toDate()) : ''}</div>
+        </div>`;
+      div.onclick = () => markNotifRead(n.id);
+      list.appendChild(div);
+    });
+  }
+
+  async function markNotifRead(notifId) {
+    if (!currentUser) return;
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid, 'notifications', notifId), { read: true });
+    } catch(e) {}
+  }
+
+  window.markAllNotifsRead = async function() {
+    if (!currentUser) return;
+    const q = query(collection(db, 'users', currentUser.uid, 'notifications'));
+    const snap = await getDocs(q);
+    const updates = snap.docs.filter(d => !d.data().read).map(d =>
+      updateDoc(d.ref, { read: true })
+    );
+    await Promise.all(updates);
+  };
+
+  window.toggleNotifPanel = function() {
+    const panel = document.getElementById('notif-panel');
+    panel.classList.toggle('open');
+    // close other menus
+    document.getElementById('user-menu').classList.remove('open');
+    document.getElementById('lang-menu').classList.remove('open');
+  };
+
+  // Patch toggleAmen to write notification to prayer author
+  const _origToggleAmen = window.toggleAmen;
+  window.toggleAmen = async function(prayerId) {
+    if (!currentUser) return;
+    const pRef = doc(db, 'prayers', prayerId);
+    const pSnap = await getDoc(pRef);
+    if (!pSnap.exists()) return;
+    const pData = pSnap.data();
+    const users = pData.amenUsers || [];
+    const wasAmen = users.includes(currentUser.uid);
+    if (wasAmen) {
+      await updateDoc(pRef, { amenUsers: arrayRemove(currentUser.uid) });
+    } else {
+      await updateDoc(pRef, { amenUsers: arrayUnion(currentUser.uid) });
+      // Notify prayer author (not self)
+      if (pData.authorId && pData.authorId !== currentUser.uid) {
+        try {
+          await addDoc(collection(db, 'users', pData.authorId, 'notifications'), {
+            type: 'amen',
+            message: `${currentUser.displayName || 'Un hermano/a'} oró Amén por tu petición 🙏`,
+            read: false,
+            createdAt: serverTimestamp(),
+          });
+        } catch(e) {}
+      }
+    }
+  };
+
+  // Patch sendComment to write notification to testimony author
+  const _origSendComment = window.sendComment;
+  window.sendComment = async function(testId) {
+    if (!currentUser) return;
+    const input = document.getElementById('comment-text-' + testId);
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    const tRef = doc(db,'testimonies',testId);
+    const tSnap = await getDoc(tRef);
+    await addDoc(collection(db,'testimonies',testId,'comments'), {
+      text,
+      authorId:   currentUser.uid,
+      authorName: currentUser.displayName || currentUser.email,
+      createdAt:  serverTimestamp(),
+    });
+    await updateDoc(tRef, { commentCount: (await getDocs(collection(db,'testimonies',testId,'comments'))).size });
+    // Notify testimony author
+    if (tSnap.exists() && tSnap.data().authorId && tSnap.data().authorId !== currentUser.uid) {
+      try {
+        await addDoc(collection(db, 'users', tSnap.data().authorId, 'notifications'), {
+          type: 'comment',
+          message: `${currentUser.displayName || 'Un hermano/a'} comentó en tu testimonio 💬`,
+          read: false,
+          createdAt: serverTimestamp(),
+        });
+      } catch(e) {}
+    }
+    toggleComments(testId);
+    toggleComments(testId);
+  };
+
+  // Close notif panel on outside click (extend existing handler)
+  document.addEventListener('click', e => {
+    const np = document.getElementById('notif-panel');
+    const nb = document.getElementById('notif-btn');
+    if (np && nb && !np.contains(e.target) && !nb.contains(e.target)) np.classList.remove('open');
+  });
   let obCurrent = 0;
   function showOnboarding() {
     document.getElementById('screen-onboarding').classList.add('open');
@@ -1819,6 +2094,11 @@
       bottom_verse:'Una comunidad mundial unida en oración 🙏',
       ob1_title:'Halleluya', ob2_title:'Testimonios de fe', ob3_title:'Comunidad global',
       ob1_desc:'Una comunidad mundial unida en oración. Comparte tus peticiones y miles de hermanos orarán contigo.',
+            ob2_desc:'Cuando Dios responda tu oración, comparte tu testimonio. Tu historia puede fortalecer la fe de otros.',
+      ob3_desc:'"Si dos se ponen de acuerdo en la tierra, mi Padre lo hará en el cielo." — Mateo 18:19',
+      ob_next:'Siguiente',
+      ob_skip:'Saltar',
+      ob_start:'¡Comenzar!',
       menu_my_prayers:'🙏 Mis oraciones', menu_my_test:'✨ Mis testimonios', menu_ofrenda:'🙌 Ofrenda', menu_signout:'Cerrar sesión',
     },
     en: {
@@ -1837,6 +2117,11 @@
       bottom_verse:'A worldwide community united in prayer 🙏',
       ob1_title:'Halleluya', ob2_title:'Testimonies of faith', ob3_title:'Global community',
       ob1_desc:'A worldwide community united in prayer. Share your requests and thousands of brothers will pray with you.',
+            ob2_desc:'When God answers your prayer, share your testimony. Your story can strengthen the faith of others.',
+      ob3_desc:'"If two of you agree here on earth concerning anything you ask, my Father in heaven will do it." — Matthew 18:19',
+      ob_next:'Next',
+      ob_skip:'Skip',
+      ob_start:"Let's go!",
       menu_my_prayers:'🙏 My prayers', menu_my_test:'✨ My testimonies', menu_ofrenda:'🙌 Offering', menu_signout:'Sign out',
     },
     pt: {
@@ -1855,6 +2140,11 @@
       bottom_verse:'Uma comunidade mundial unida em oração 🙏',
       ob1_title:'Halleluya', ob2_title:'Testemunhos de fé', ob3_title:'Comunidade global',
       ob1_desc:'Uma comunidade mundial unida em oração. Compartilhe seus pedidos e milhares de irmãos orarão com você.',
+            ob2_desc:'Quando Deus responder sua oração, compartilhe seu testemunho. Sua história pode fortalecer a fé de outros.',
+      ob3_desc:'"Se dois de vocês concordarem em pedir alguma coisa, ela será dada pelo meu Pai." — Mateus 18:19',
+      ob_next:'Próximo',
+      ob_skip:'Pular',
+      ob_start:'Começar!',
       menu_my_prayers:'🙏 Minhas orações', menu_my_test:'✨ Meus testemunhos', menu_ofrenda:'🙌 Oferta', menu_signout:'Sair',
     },
     fr: {
@@ -1891,6 +2181,11 @@
       bottom_verse:'全球社区联合祷告 🙏',
       ob1_title:'哈利路亚', ob2_title:'信仰见证', ob3_title:'全球社区',
       ob1_desc:'一个全球联合祷告的社区。分享您的请求，数千位弟兄姐妹将与您一同祷告。',
+            ob2_desc:'当神回应你的祷告时，分享你的见证。你的故事可以坚固他人的信心。',
+      ob3_desc:'"如果你们中有两个人同心祈求，我在天上的父必为你们成全。" — 马太福音 18:19',
+      ob_next:'下一步',
+      ob_skip:'跳过',
+      ob_start:'开始！',
       menu_my_prayers:'🙏 我的祷告', menu_my_test:'✨ 我的见证', menu_ofrenda:'🙌 奉献', menu_signout:'退出',
     },
     ru: {
@@ -1909,6 +2204,11 @@
       bottom_verse:'Всемирное сообщество, объединённое в молитве 🙏',
       ob1_title:'Аллилуйя', ob2_title:'Свидетельства веры', ob3_title:'Мировое сообщество',
       ob1_desc:'Всемирное сообщество, объединённое в молитве. Делитесь своими просьбами, и тысячи братьев помолятся вместе с вами.',
+            ob2_desc:'Когда Бог ответит на вашу молитву, поделитесь свидетельством. Ваша история может укрепить веру других.',
+      ob3_desc:'"Если двое из вас согласятся просить о чём-либо, Отец Небесный даст им это." — Матфея 18:19',
+      ob_next:'Далее',
+      ob_skip:'Пропустить',
+      ob_start:'Начать!',
       menu_my_prayers:'🙏 Мои молитвы', menu_my_test:'✨ Мои свидетельства', menu_ofrenda:'🙌 Пожертвование', menu_signout:'Выйти',
     },
   };
